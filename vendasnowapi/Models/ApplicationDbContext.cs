@@ -23,7 +23,8 @@ namespace Models
         }
 
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
-        
+        public DbSet<Client> Client { get; set; }
+
 
     }
 }
