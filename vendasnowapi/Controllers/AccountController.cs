@@ -9,7 +9,6 @@ using Models;
 using System.Linq;
 using System.Security.Claims;
 using System.Net.Mail;
-using System.Configuration;
 using Microsoft.AspNetCore.Hosting;
 
 namespace vendasnowapi.Controllers
@@ -153,7 +152,7 @@ namespace vendasnowapi.Controllers
                     return BadRequest(addUserResult.Errors.FirstOrDefault().ToString());
                 }
 
-                return Ok("Usuário registrado com sucesso! Verifique sua caixa de email e confirme o cadastro.");
+                return Ok("Usuário enviado com sucesso! Verifique sua caixa de email e confirme o cadastro.");
 
             }
             catch (Exception ex)
