@@ -10,9 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Models;
-using Repositorys;
 using System.Text;
-using UnitOfWork;
 
 namespace vendasnowapi
 {
@@ -45,7 +43,7 @@ namespace vendasnowapi
                 options.User.RequireUniqueEmail = true;
             })
                          .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddScoped(typeof(IClientRepository), typeof(ClientRepository));
+            //services.AddScoped(typeof(IClientRepository), typeof(ClientRepository));
 
 
             services.AddControllersWithViews();

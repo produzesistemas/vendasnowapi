@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Models
@@ -23,8 +22,6 @@ namespace Models
         }
 
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
-        public DbSet<Client> Client { get; set; }
-
 
     }
 }
