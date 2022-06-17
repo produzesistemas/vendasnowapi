@@ -447,8 +447,8 @@ C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\fa-solid-900.46fdbd2d897f8824e63c.woff
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\favicon.ico
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\index.html
-C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\main-es2015.b0df8da193c1e1a03d8f.js
-C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\main-es5.b0df8da193c1e1a03d8f.js
+C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\main-es2015.984c0fb77018ff7f0f4a.js
+C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\main-es5.984c0fb77018ff7f0f4a.js
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\polyfills-es2015.7f2be5c3211715ed096a.js
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\polyfills-es5.28f12a96904b8f2b6d42.js
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\runtime-es2015.0dae8cbc97194c7caed4.js

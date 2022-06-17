@@ -30,7 +30,7 @@ export class UserComponent implements OnInit {
 
                 this.authService.confirmUser(loginUser).subscribe(result => {
                     this.hasResult = true;
-                    this.msg = "Usuário confirmado com sucesso. Faça login no app VendasNow Premium!";
+                    this.msg = "Usuário confirmado com sucesso. Faça login no app VendasNow Pro!";
                     this.classAlert = "alert-success";
                 }, err => {
                     this.hasResult = true;

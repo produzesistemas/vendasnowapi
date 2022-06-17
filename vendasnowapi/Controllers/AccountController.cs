@@ -79,7 +79,7 @@ namespace vendasnowapi.Controllers
                 MailMessage mail = new MailMessage();
                 mail.From = new MailAddress(configuration["FromEmail"].ToString());
                 mail.To.Add(user.Email);
-                mail.Subject = "Recuperação de senha na Dajú Semijóias.";
+                mail.Subject = "Recuperação de senha no app VendasNow Pro.";
                 mail.Body = "<div></div>" +
                     "<div>Sua senha foi redefinida.</div>" +
                      "<div>Login: " + user.Email + "</div>" +
@@ -149,15 +149,17 @@ namespace vendasnowapi.Controllers
                 }
                 else
                 {
+                    if (addUserResult.Errors.FirstOrDefault().Code.Equals("PasswordTooShort")) { return BadRequest("A senha deve ter no mínimo 6 caracteres"); }
+                    if (addUserResult.Errors.FirstOrDefault().Code.Equals("InvalidUserName") || addUserResult.Errors.FirstOrDefault().Code.Equals("InvalidEmail")) { return BadRequest("E-mail inválido!"); }
                     return BadRequest(addUserResult.Errors.FirstOrDefault().ToString());
                 }
 
-                return Ok("Usuário enviado com sucesso! Verifique sua caixa de email e confirme o cadastro.");
+                return Ok("Usuário registrado com sucesso! Verifique sua caixa de email e confirme o cadastro.");
 
             }
             catch (Exception ex)
             {
-                return new JsonResult(ex);
+                return BadRequest(ex.InnerException);
             }
 
         }
@@ -170,8 +172,8 @@ namespace vendasnowapi.Controllers
                 MailMessage mail = new MailMessage();
                 mail.From = new MailAddress(configuration["FromEmail"].ToString());
                 mail.To.Add(Email);
-                mail.Subject = "O aplicativo VendasNow Premium precisa validar seu email.";
-                mail.Body = "<div style='padding-top: 15px;padding-bottom: 15px;'><img src='" + string.Concat(configuration["Dominio"].ToString(), "/assets/logo_vendasnow.png") + "' width='100'></div>" +
+                mail.Subject = "O aplicativo VendasNow Pro precisa validar seu email.";
+                mail.Body = "<div style='padding-top: 15px;padding-bottom: 15px;'><img src='" + string.Concat(configuration["Dominio"].ToString(), "/assets/logo_arredondado_app.png") + "' width='100'></div>" +
                     "<div style='padding-top: 15px;'>Clique no link abaixo para validar seu email no aplicativo.</div>" +
                     "<div><a href=" + configuration["Dominio"].ToString() + "/user/" + userId + "/" + code + ">Clique para validar</a>" +
                 "<div></div>";
