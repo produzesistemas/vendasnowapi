@@ -21,7 +21,6 @@ namespace vendasnowapi.Controllers
         private readonly SignInManager<ApplicationUser> signInManager;
         private IConfiguration configuration;
         private IWebHostEnvironment _hostEnvironment;
-        private string msg;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
@@ -49,58 +48,40 @@ namespace vendasnowapi.Controllers
                 {
                     return BadRequest("E-mail não encontrado.");
                 }
-                if (user.Provider == "Google")
+
+                var passwordValidator = new PasswordValidator<ApplicationUser>();
+                var valid = await passwordValidator.ValidateAsync(userManager, user, loginUser.Secret);
+
+                if (valid.Succeeded)
                 {
-                    return BadRequest("E-mail inválido. Efetue o login pelo Google");
+                    user.PasswordHash = userManager.PasswordHasher.HashPassword(user, loginUser.Secret);
                 }
-                user.PasswordHash = userManager.PasswordHasher.HashPassword(user, loginUser.Secret);
+                else
+                {
+                    if (valid.Errors.FirstOrDefault().Code.Equals("PasswordTooShort")) { return BadRequest("A senha deve ter no mínimo 6 caracteres"); }
+                    return BadRequest("Não foi possível recuperar a senha.");
+                }
+                user.EmailConfirmed = false;
                 var result = await userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    SendEmailRecoverPassword(user, loginUser.Secret);
+                    var code = Guid.NewGuid().ToString();
+                    await userManager.AddClaimAsync(user, new Claim("CodeConfirmation", code));
+                    sendEmailConfirmUser(loginUser.Email, code, user.Id);
                 } else
                 {
+                    if (result.Errors.FirstOrDefault().Code.Equals("PasswordTooShort")) { return BadRequest("A senha deve ter no mínimo 6 caracteres"); }
+                    if (result.Errors.FirstOrDefault().Code.Equals("InvalidUserName") || result.Errors.FirstOrDefault().Code.Equals("InvalidEmail")) { return BadRequest("E-mail inválido!"); }
                     return BadRequest("Não foi possível recuperar a senha.");
                 }
 
-                return Ok();
+                return Ok("Senha recuperada com sucesso! Verifique sua caixa de email e confirme o cadastro.");
             }
             catch (Exception ex)
             {
                 return new JsonResult(ex);
             }
 
-        }
-
-        private void SendEmailRecoverPassword(IdentityUser user, string secret)
-        {
-            try
-            {
-                MailMessage mail = new MailMessage();
-                mail.From = new MailAddress(configuration["FromEmail"].ToString());
-                mail.To.Add(user.Email);
-                mail.Subject = "Recuperação de senha no app VendasNow Pro.";
-                mail.Body = "<div></div>" +
-                    "<div>Sua senha foi redefinida.</div>" +
-                     "<div>Login: " + user.Email + "</div>" +
-                     "<div>Senha: " + secret + "</div>";
-                mail.IsBodyHtml = true;
-                SmtpClient smtp = new SmtpClient(configuration["STMPEmail"].ToString(), Convert.ToInt32(configuration["PortEmail"].ToString()));
-                smtp.Credentials = new System.Net.NetworkCredential(configuration["UserEmail"].ToString(), configuration["PassEmail"].ToString());
-                smtp.Send(mail);
-            }
-            catch (SmtpFailedRecipientException ex)
-            {
-                throw ex;
-            }
-            catch (SmtpException ex)
-            {
-                throw ex;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
         }
 
         [HttpPost()]
@@ -222,7 +203,7 @@ namespace vendasnowapi.Controllers
                 var permission = claims.Where(c => c.Type.Contains("role")).Select(c => c.Value).FirstOrDefault();
                 if (!permission.Equals("VendasNow"))
                 {
-                    return BadRequest("Acesso negado! Usuário não é usuário do VendasNow Premium!");
+                    return BadRequest("Acesso negado! Usuário não é usuário do VendasNow Pro!");
                 }
                 var applicationUser = new ApplicationUser();
                 applicationUser.Id = user.Id;
