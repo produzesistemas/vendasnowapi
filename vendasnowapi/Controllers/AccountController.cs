@@ -75,7 +75,7 @@ namespace vendasnowapi.Controllers
                     return BadRequest("Não foi possível recuperar a senha.");
                 }
 
-                return Ok("Senha recuperada com sucesso! Verifique sua caixa de email e confirme o cadastro.");
+                return new JsonResult("Senha recuperada com sucesso! Verifique sua caixa de email e confirme o cadastro.");
             }
             catch (Exception ex)
             {
