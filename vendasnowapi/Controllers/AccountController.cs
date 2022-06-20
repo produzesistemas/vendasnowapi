@@ -135,7 +135,7 @@ namespace vendasnowapi.Controllers
                     return BadRequest(addUserResult.Errors.FirstOrDefault().ToString());
                 }
 
-                return Ok("Usuário registrado com sucesso! Verifique sua caixa de email e confirme o cadastro.");
+                return new JsonResult("Usuário registrado com sucesso! Verifique sua caixa de email e confirme o cadastro.");
 
             }
             catch (Exception ex)
@@ -239,7 +239,7 @@ namespace vendasnowapi.Controllers
             {
                 return BadRequest("Não foi possível alterar a senha.");
             }
-            return Ok();
+            return new JsonResult("Senha alterada com sucesso!");
         }
 
         [HttpPost()]
