@@ -79,7 +79,7 @@ namespace vendasnowapi.Controllers
                     client.AspNetUsersId = id;
                     ClientRepository.Insert(client);
                 }
-                return new JsonResult("Cliente registrado com sucesso.");
+                return new JsonResult(client);
             }
             catch (Exception ex)
             {
