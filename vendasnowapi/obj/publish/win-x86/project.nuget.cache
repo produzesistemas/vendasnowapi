@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "6m0xKe3RLbZpD1PWoZzhEunZGTF8x5R915Ump8Icv9gD6nJnW4HqvwlveMOrrQ1/15liHOOGJCRwuNCp/MgDcw==",
+  "dgSpecHash": "zDo/V0+Wd7Kp6PuvahKt3SZFHXzLo5O6ysCewPNTeN7/gmPm//lyXc20EuVZo6OWrB7IGWXQcmQuuqnUa/3AJQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\paulo.sergio\\Documents\\vendasnowapi\\vendasnowapi\\vendasnowapi.csproj",
   "expectedPackageFiles": [
@@ -209,9 +209,9 @@
     "C:\\Users\\paulo.sergio\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
     "C:\\Users\\paulo.sergio\\.nuget\\packages\\system.xml.xmldocument\\4.3.0\\system.xml.xmldocument.4.3.0.nupkg.sha512",
     "C:\\Users\\paulo.sergio\\.nuget\\packages\\system.xml.xmlserializer\\4.3.0\\system.xml.xmlserializer.4.3.0.nupkg.sha512",
-    "C:\\Users\\paulo.sergio\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x86\\3.1.26\\microsoft.netcore.app.runtime.win-x86.3.1.26.nupkg.sha512",
-    "C:\\Users\\paulo.sergio\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x86\\3.1.26\\microsoft.windowsdesktop.app.runtime.win-x86.3.1.26.nupkg.sha512",
-    "C:\\Users\\paulo.sergio\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x86\\3.1.26\\microsoft.aspnetcore.app.runtime.win-x86.3.1.26.nupkg.sha512"
+    "C:\\Users\\paulo.sergio\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x86\\3.1.27\\microsoft.netcore.app.runtime.win-x86.3.1.27.nupkg.sha512",
+    "C:\\Users\\paulo.sergio\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x86\\3.1.27\\microsoft.windowsdesktop.app.runtime.win-x86.3.1.27.nupkg.sha512",
+    "C:\\Users\\paulo.sergio\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x86\\3.1.27\\microsoft.aspnetcore.app.runtime.win-x86.3.1.27.nupkg.sha512"
   ],
   "logs": []
 }

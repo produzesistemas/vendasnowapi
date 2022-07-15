@@ -351,7 +351,7 @@ C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\hostfxr.dll
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\hostpolicy.dll
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\mscordaccore.dll
-C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\mscordaccore_x86_x86_4.700.22.26002.dll
+C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\mscordaccore_x86_x86_4.700.22.30802.dll
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\mscordbi.dll
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\mscorrc.debug.dll
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\mscorrc.dll
