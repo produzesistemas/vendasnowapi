@@ -13,30 +13,35 @@
     </ion-toolbar>
   </ion-header> -->
 
-  
+
 
   <div id="container">
     <div class="img">
-      <ion-img src = "assets/logo.png"></ion-img>
+      <ion-img src="assets/logo.png"></ion-img>
     </div>
-    
-    <ion-list>
-      <ion-item>
-        <ion-label fixed>E-mail</ion-label>
-        <ion-input type="text" formControlName="email"></ion-input>
+    <form [formGroup]="form">
+      <ion-list>
+        <ion-item>
+          <ion-label fixed>E-mail</ion-label>
+          <ion-input type="text" formControlName="email"></ion-input>
+        </ion-item>
         <div *ngIf="submitted && f.email.errors">
-          <p *ngIf="f.email.errors.required" class="text-danger small">* Informe o email</p>
+          <ion-text color="danger" *ngIf="f.email.errors.required">
+            <h6>* Informe o email</h6>
+        </ion-text>
         </div>
-      </ion-item>
-      <ion-item>
-        <ion-label fixed>Senha</ion-label>
-        <ion-input type="password" formControlName="secret"></ion-input>
+        <ion-item>
+          <ion-label fixed>Senha</ion-label>
+          <ion-input type="password" formControlName="secret"></ion-input>
+        </ion-item>
         <div *ngIf="submitted && f.secret.errors">
-          <p *ngIf="f.secret.errors.required" class="text-danger small">* Informe a senha</p>
+          <ion-text color="danger" *ngIf="f.secret.errors.required">
+            <h6>* Informe a senha</h6>
+        </ion-text>
         </div>
-      </ion-item>
-    </ion-list>
-    <ion-button expand="block" fill="outline">Acessar</ion-button>
+      </ion-list>
+    </form>
+    <ion-button expand="block" fill="outline" (click)="onLogin()">Acessar</ion-button>
   </div>
 
 </ion-content>
