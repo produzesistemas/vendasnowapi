@@ -1,20 +1,42 @@
-<ion-header [translucent]="true">
+<!-- <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
       Blank
     </ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+  <!-- <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Blank</ion-title>
     </ion-toolbar>
-  </ion-header>
+  </ion-header> -->
+
+  
 
   <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    <div class="img">
+      <ion-img src = "assets/logo.png"></ion-img>
+    </div>
+    
+    <ion-list>
+      <ion-item>
+        <ion-label fixed>E-mail</ion-label>
+        <ion-input type="text" formControlName="email"></ion-input>
+        <div *ngIf="submitted && f.email.errors">
+          <p *ngIf="f.email.errors.required" class="text-danger small">* Informe o email</p>
+        </div>
+      </ion-item>
+      <ion-item>
+        <ion-label fixed>Senha</ion-label>
+        <ion-input type="password" formControlName="secret"></ion-input>
+        <div *ngIf="submitted && f.secret.errors">
+          <p *ngIf="f.secret.errors.required" class="text-danger small">* Informe a senha</p>
+        </div>
+      </ion-item>
+    </ion-list>
+    <ion-button expand="block" fill="outline">Acessar</ion-button>
   </div>
+
 </ion-content>
