@@ -1,0 +1,7 @@
+{
+  "name": "vendasnowpro",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
