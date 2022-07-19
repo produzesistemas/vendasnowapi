@@ -68,12 +68,12 @@ export class AuthInterceptor implements HttpInterceptor {
 
   private addAuthenticationTokenMaster(request: HttpRequest<any>): HttpRequest<any> {
 
-    const currentUser = this.authenticationService.getCurrentUserMaster();
+    const currentUser = this.authenticationService.getCurrentUser();
     if (currentUser) {
         this.token = currentUser.token;
     } else {
-      if (this.authenticationService.getCurrentUserPartner()){
-        this.token = this.authenticationService.getCurrentUserPartner().token;
+      if (this.authenticationService.getCurrentUser()){
+        this.token = this.authenticationService.getCurrentUser().token;
 
       }
     }

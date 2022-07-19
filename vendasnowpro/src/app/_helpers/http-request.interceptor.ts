@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthenticationService } from '../_services/authentication.service';
 import { environment } from 'src/environments/environment';
+import { Platform, ToastController } from '@ionic/angular';
 
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
@@ -14,6 +15,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     constructor(
         private authenticationService: AuthenticationService,
         private toastr: ToastrService,
+        public toastController: ToastController,
         private spinner: NgxSpinnerService) {
         this.countSpinner = 0;
     }
@@ -42,6 +44,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
                 if (err.status === 400) {
                     console.log(err);
                     if (Array.isArray(err.error)) {
+
                         if (err.url === environment.urlSandboxRequisicaoCielo) {
                             switch(err.error[0].Code) {
                                 case 126:
@@ -67,8 +70,10 @@ export class HttpRequestInterceptor implements HttpInterceptor {
                                 break;
                             }
                         }
+
                     } else {
-                        this.toastr.error(err.error, 'Atenção!');
+                        // this.toastr.error(err.error, 'Atenção!');
+                        this.presentToast(err.error);
                     }
 
                 }
@@ -85,4 +90,14 @@ export class HttpRequestInterceptor implements HttpInterceptor {
             }
             ));
     }
+
+    async presentToast(error){
+        const toast = await this.toastController.create({
+          message: error,
+          duration: 2000,
+          position: 'middle'
+        });
+    
+        toast.present();
+      }
 }
