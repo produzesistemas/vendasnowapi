@@ -190,7 +190,7 @@ namespace vendasnowapi.Controllers
                 var result = await signInManager.PasswordSignInAsync(loginUser.Email, loginUser.Secret, false, false);
                 if (!result.Succeeded)
                 {
-                    return BadRequest("Acesso negado! Login inválido!");
+                    return BadRequest("Acesso negado! Login inválido ou conta não confirmada!");
                 }
                 var user = await userManager.FindByEmailAsync(loginUser.Email);
                 if (!user.EmailConfirmed)
