@@ -79,7 +79,7 @@ export class HomePage implements OnInit {
         this.authenticationService.clearUser();
         this.authenticationService.addCurrentUser(result);
         this.ionLoaderService.dismissLoader();
-        return this.router.navigate(['/main']);
+        return this.router.navigate(['/home']);
     });
   });
 }
