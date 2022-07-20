@@ -6,7 +6,8 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthenticationService } from '../_services/authentication.service';
 import { environment } from 'src/environments/environment';
-import { Platform, ToastController } from '@ionic/angular';
+import { LoadingController, Platform, ToastController } from '@ionic/angular';
+import { IonLoadingService } from '../_services/ion-loading.service';
 
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
@@ -16,18 +17,21 @@ export class HttpRequestInterceptor implements HttpInterceptor {
         private authenticationService: AuthenticationService,
         private toastr: ToastrService,
         public toastController: ToastController,
-        private spinner: NgxSpinnerService) {
+        public loadingController: LoadingController
+        // private spinner: NgxSpinnerService
+        ) {
         this.countSpinner = 0;
     }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         this.countSpinner++;
-        this.spinner.show();
+        // this.spinner.show();
+
         return next.handle(request).pipe(
             finalize(() => {
                 this.countSpinner--;
                 if (this.countSpinner === 0) {
-                    this.spinner.hide();
+                    // this.spinner.hide();
                 }
             }),
             catchError(err => {
@@ -35,8 +39,9 @@ export class HttpRequestInterceptor implements HttpInterceptor {
                 const msgDefault = 'Falha na conexão, tente novamente.';
 
                 if (err.status === 401) {
-                    this.toastr.error('Acesso negado.', 'Atenção!');
+                    // this.toastr.error('Acesso negado.', 'Atenção!');
                     // this.authenticationService.logout();
+                    this.presentToast(err.error);
                     localStorage.clear();
                     location.reload();
                 }
@@ -79,11 +84,13 @@ export class HttpRequestInterceptor implements HttpInterceptor {
                 }
 
                 if (err.status === 500) {
-                    this.toastr.error(err.error, 'Atenção!');
+                    // this.toastr.error(err.error, 'Atenção!');
+                    this.presentToast(err.error);
                 }
 
                 if (err.status === 403) {
-                    this.toastr.error('Acesso negado.', 'Atenção!');
+                    this.presentToast('Acesso negado.');
+                    // this.toastr.error('Acesso negado.', 'Atenção!');
                 }
 
                 return throwError(err);

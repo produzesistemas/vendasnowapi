@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginUser } from '../_model/login-user-model';
 import { AuthenticationService } from '../_services/authentication.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
+import { ToastService } from '../_services/toast.service';
+import { IonLoadingService } from '../_services/ion-loading.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -21,7 +24,9 @@ export class HomePage implements OnInit {
   public isForgot = false;
   constructor(
     private authenticationService: AuthenticationService,
-    private alertController: AlertController,
+    private router: Router,
+    public toastController: ToastController,
+    private ionLoaderService: IonLoadingService,
     private formBuilder: FormBuilder
     ) {}
 
@@ -51,6 +56,16 @@ export class HomePage implements OnInit {
 
   }
 
+  async presentToast(error: string){
+    const toast = await this.toastController.create({
+      message: error,
+      duration: 2000,
+      position: 'middle'
+    });
+
+    toast.present();
+  }
+
   onLogin() {
     this.submitted = true;
     if (this.form.invalid) {
@@ -58,13 +73,18 @@ export class HomePage implements OnInit {
     }
     this.loginUser.email = this.form.controls.email.value;
     this.loginUser.secret = this.form.controls.secret.value;
+    this.ionLoaderService.simpleLoader().then(()=>{
     this.authenticationService.login(this.loginUser)
     .subscribe(result => {
         this.authenticationService.clearUser();
         this.authenticationService.addCurrentUser(result);
-        // return this.router.navigate(['/partner-area']);
+        this.ionLoaderService.dismissLoader();
+        return this.router.navigate(['/main']);
     });
+  });
 }
+
+
 
 onRegister() {
   this.submittedRegister = true;
@@ -73,17 +93,13 @@ onRegister() {
   }
   this.loginUser.email = this.formRegister.controls.email.value;
   this.loginUser.secret = this.formRegister.controls.secret.value;
+  this.ionLoaderService.simpleLoader().then(()=>{
   this.authenticationService.register(this.loginUser)
-  .subscribe(async result => {
-    const alert = await this.alertController.create({
-      header: 'Aviso',
-      subHeader: 'Verifique sua caixa de email',
-      message: 'e clique no link para validar sua conta!',
-      buttons: ['OK']
-    });
-
-    await alert.present();
+  .subscribe(result => {
+    this.ionLoaderService.dismissLoader();
+    this.presentToast('Verifique sua caixa de email e clique no link para validar sua conta!');
   });
+});
 }
 
 register() {
