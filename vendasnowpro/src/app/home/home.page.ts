@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 import { LoginUser } from '../_model/login-user-model';
 import { AuthenticationService } from '../_services/authentication.service';
-import { AlertController, ToastController } from '@ionic/angular';
-import { ToastService } from '../_services/toast.service';
 import { IonLoadingService } from '../_services/ion-loading.service';
-import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit {
+export class HomePage {
+
   public loginUser: LoginUser = new LoginUser();
   form: FormGroup;
   formRegister: FormGroup;
@@ -22,6 +23,7 @@ export class HomePage implements OnInit {
   public isRegister = false;
   public isLogin = true;
   public isForgot = false;
+  currentUser;
   constructor(
     private authenticationService: AuthenticationService,
     private router: Router,
@@ -35,9 +37,12 @@ export class HomePage implements OnInit {
     get ff() { return this.formForgot.controls; }
 
     ngOnInit() {
-      // if (this.authenticationService.getCurrentUser()) {
-      //     this.router.navigate(['partner-area']);
-      // }
+      this.authenticationService.getObject().then((data: any) => {
+        this.currentUser = data;
+        this.router.navigateByUrl('/main', { replaceUrl: true });
+      });
+    
+
       this.form = this.formBuilder.group({
           email: ['', Validators.required],
           secret: ['', Validators.required]
@@ -76,10 +81,11 @@ export class HomePage implements OnInit {
     this.ionLoaderService.simpleLoader().then(()=>{
     this.authenticationService.login(this.loginUser)
     .subscribe(result => {
-        this.authenticationService.clearUser();
-        this.authenticationService.addCurrentUser(result);
+        this.authenticationService.clear();
+        this.authenticationService.setObject(result);
         this.ionLoaderService.dismissLoader();
-        return this.router.navigate(['/home']);
+        this.router.navigateByUrl('/main', { replaceUrl: true });
+        // return this.router.navigate(['/main']);
     });
   });
 }

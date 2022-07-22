@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { GenericHttpService } from './genericHttpService';
 import { ApplicationUser } from 'src/app/_model/application-user';
 import { LoginUser } from '../_model/login-user-model'
+import { Storage } from '@capacitor/storage';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService extends GenericHttpService<any>{
@@ -16,20 +17,21 @@ export class AuthenticationService extends GenericHttpService<any>{
   }
 
   logout() {
-    localStorage.removeItem('vendasnow_user');
+    this.clear();
+    // localStorage.removeItem('vendasnow_user');
   }
 
-  addCurrentUser(user) {
-    localStorage.setItem('vendasnow_user', JSON.stringify(user));
-  }
+  // addCurrentUser(user) {
+  //   localStorage.setItem('vendasnow_user', JSON.stringify(user));
+  // }
 
-  clearUser() {
-    localStorage.removeItem('vendasnow_user');
-  }
+  // clearUser() {
+  //   localStorage.removeItem('vendasnow_user');
+  // }
 
-  getCurrentUser() {
-    return new BehaviorSubject<any>(JSON.parse(localStorage.getItem('vendasnow_user'))).getValue();
-  }
+  // getCurrentUser() {
+  //   return new BehaviorSubject<any>(JSON.parse(localStorage.getItem('vendasnow_user'))).getValue();
+  // }
 
   login(user) {
     return this.postAll('account/loginVendasNow', user);
@@ -45,6 +47,21 @@ export class AuthenticationService extends GenericHttpService<any>{
 
   changePassword(user) {
     return this.postAll('account/changePassword', user);
+  }
+
+  async setObject(value: any) {
+    await Storage.set({ key: 'vendasnow_user', value: JSON.stringify(value) });
+  }
+
+  async getObject(): Promise<{ value: any }> {
+
+    
+    const ret = await Storage.get({ key: 'vendasnow_user' });
+    return JSON.parse(ret.value);
+  }
+
+  async clear() {
+    await Storage.clear();
   }
 
 }

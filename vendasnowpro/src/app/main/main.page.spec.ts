@@ -1,24 +1,46 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
-import { RouterModule } from '@angular/router';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { TestBed, waitForAsync } from '@angular/core/testing';
+
+import { RouterTestingModule } from '@angular/router/testing';
+
 import { MainPage } from './main.page';
 
 describe('MainPage', () => {
-  let component: MainPage;
-  let fixture: ComponentFixture<MainPage>;
+
 
   beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ MainPage ],
-      imports: [IonicModule.forRoot(), RouterModule.forRoot([])]
-    }).compileComponents();
 
-    fixture = TestBed.createComponent(MainPage);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    TestBed.configureTestingModule({
+      declarations: [MainPage],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [ RouterTestingModule.withRoutes([])],
+    }).compileComponents();
   }));
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  it('should create the app', waitForAsync(() => {
+    const fixture = TestBed.createComponent(MainPage);
+    const app = fixture.debugElement.componentInstance;
+    expect(app).toBeTruthy();
+  }));
+
+  it('should have menu labels', waitForAsync(() => {
+    const fixture = TestBed.createComponent(MainPage);
+    fixture.detectChanges();
+    const app = fixture.nativeElement;
+    const menuItems = app.querySelectorAll('ion-label');
+    expect(menuItems.length).toEqual(12);
+    expect(menuItems[0].textContent).toContain('Inbox');
+    expect(menuItems[1].textContent).toContain('Outbox');
+  }));
+
+  it('should have urls', waitForAsync(() => {
+    const fixture = TestBed.createComponent(MainPage);
+    fixture.detectChanges();
+    const app = fixture.nativeElement;
+    const menuItems = app.querySelectorAll('ion-item');
+    expect(menuItems.length).toEqual(12);
+    expect(menuItems[0].getAttribute('ng-reflect-router-link')).toEqual('/folder/Inbox');
+    expect(menuItems[1].getAttribute('ng-reflect-router-link')).toEqual('/folder/Outbox');
+  }));
+
 });

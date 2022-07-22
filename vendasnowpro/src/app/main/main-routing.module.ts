@@ -5,7 +5,18 @@ import { MainPage } from './main.page';
 const routes: Routes = [
   {
     path: '',
-    component: MainPage
+    component: MainPage,
+    children: [
+      {
+        path: 'first-page',
+        loadChildren: () => import('../first-page/first-page.module').then(m => m.FirstPageModule)
+      },
+      {
+        path: '',
+        redirectTo: '/main/first-page',
+        pathMatch: 'full'
+      }
+    ]
   }
 ];
 

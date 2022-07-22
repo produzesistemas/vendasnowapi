@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
-import { NgxSpinnerService } from 'ngx-spinner';
+// import { ToastrService } from 'ngx-toastr';
+// import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthenticationService } from '../_services/authentication.service';
 import { environment } from 'src/environments/environment';
 import { LoadingController, Platform, ToastController } from '@ionic/angular';
@@ -15,7 +15,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
 
     constructor(
         private authenticationService: AuthenticationService,
-        private toastr: ToastrService,
+        // private toastr: ToastrService,
         public toastController: ToastController,
         public loadingController: LoadingController
         // private spinner: NgxSpinnerService
@@ -53,25 +53,25 @@ export class HttpRequestInterceptor implements HttpInterceptor {
                         if (err.url === environment.urlSandboxRequisicaoCielo) {
                             switch(err.error[0].Code) {
                                 case 126:
-                                    this.toastr.error('Data de expiração do cartão de crédito é inválida', 'Atenção!');
+                                    // this.toastr.error('Data de expiração do cartão de crédito é inválida', 'Atenção!');
                                 break;
                                 case 999:
-                                    this.toastr.error('Problemas na identificação do cartão', 'Atenção!');
+                                    // this.toastr.error('Problemas na identificação do cartão', 'Atenção!');
                                 break;
                                 case 104:
-                                    this.toastr.error('Cliente é obrigatório', 'Atenção!');
+                                    // this.toastr.error('Cliente é obrigatório', 'Atenção!');
                                 break;
                                 case 105:
-                                    this.toastr.error('Cliente é obrigatório', 'Atenção!');
+                                    // this.toastr.error('Cliente é obrigatório', 'Atenção!');
                                 break;
                                 case 146:
-                                    this.toastr.error('Código de segurança é inválido', 'Atenção!');
+                                    // this.toastr.error('Código de segurança é inválido', 'Atenção!');
                                 break;
                                 case 129:
-                                    this.toastr.error('Meio de pagamento não vinculado a loja ou Provider inválido', 'Atenção!');
+                                    // this.toastr.error('Meio de pagamento não vinculado a loja ou Provider inválido', 'Atenção!');
                                 break;
                                 default:
-                                    this.toastr.error('Código do erro ' + err.error[0].Code , 'Atenção!');
+                                    // this.toastr.error('Código do erro ' + err.error[0].Code , 'Atenção!');
                                 break;
                             }
                         }

@@ -12,6 +12,7 @@ export class AuthInterceptor implements HttpInterceptor {
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   private MerchantId = `${environment.merchantId}`;
   private MerchantKey = `${environment.merchantKey}`;
+  public currentUser;
 
   constructor(private authenticationService: AuthenticationService) { }
 
@@ -68,16 +69,26 @@ export class AuthInterceptor implements HttpInterceptor {
 
   private addAuthenticationTokenMaster(request: HttpRequest<any>): HttpRequest<any> {
 
-    const currentUser = this.authenticationService.getCurrentUser();
-    if (currentUser) {
-        this.token = currentUser.token;
-    } else {
-      if (this.authenticationService.getCurrentUser()){
-        this.token = this.authenticationService.getCurrentUser().token;
+    // const currentUser = this.authenticationService.getObject();
+    // if (currentUser) {
+    //     this.token = currentUser.then(c => {
+    //       c.value.token;
+    //     })
+    // } 
+    // else {
+    //   if (this.authenticationService.getCurrentUser()){
+    //     this.token = this.authenticationService.getCurrentUser().token;
 
-      }
+    //   }
+    // }
+
+    this.authenticationService.getObject().then((data: any) => {
+      this.currentUser = data;
+    });
+
+    if (this.currentUser) {
+      this.token = this.currentUser.token;
     }
-
 
     if (!this.token) {
       return request;
