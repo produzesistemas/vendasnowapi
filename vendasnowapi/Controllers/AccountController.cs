@@ -110,7 +110,7 @@ namespace vendasnowapi.Controllers
 
                 var user = new ApplicationUser()
                 {
-                    UserName = loginUser.Email,
+                    UserName = loginUser.UserName,
                     Email = loginUser.Email,
                     EmailConfirmed = false,
                     PhoneNumberConfirmed = false,
@@ -131,7 +131,8 @@ namespace vendasnowapi.Controllers
                 else
                 {
                     if (addUserResult.Errors.FirstOrDefault().Code.Equals("PasswordTooShort")) { return BadRequest("A senha deve ter no mínimo 6 caracteres"); }
-                    if (addUserResult.Errors.FirstOrDefault().Code.Equals("InvalidUserName") || addUserResult.Errors.FirstOrDefault().Code.Equals("InvalidEmail")) { return BadRequest("E-mail inválido!"); }
+                    if (addUserResult.Errors.FirstOrDefault().Code.Equals("InvalidEmail")) { return BadRequest("E-mail inválido!"); }
+                    if (addUserResult.Errors.FirstOrDefault().Code.Equals("InvalidUserName")) { return BadRequest("Nome do usuário inválido. Use apenas letras e números."); }
                     return BadRequest(addUserResult.Errors.FirstOrDefault().ToString());
                 }
 

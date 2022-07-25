@@ -7,11 +7,11 @@ import { AuthenticationService } from '../_services/authentication.service';
 import { IonLoadingService } from '../_services/ion-loading.service';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  selector: 'app-login',
+  templateUrl: 'login.page.html',
+  styleUrls: ['login.page.scss'],
 })
-export class HomePage {
+export class LoginPage {
 
   public loginUser: LoginUser = new LoginUser();
   form: FormGroup;
@@ -38,8 +38,10 @@ export class HomePage {
 
     ngOnInit() {
       this.authenticationService.getObject().then((data: any) => {
-        this.currentUser = data;
-        this.router.navigateByUrl('/main', { replaceUrl: true });
+        if (data !== null) {
+          this.currentUser = data;
+          this.router.navigateByUrl('/main', { replaceUrl: true });
+        }
       });
     
 
@@ -50,6 +52,7 @@ export class HomePage {
 
       this.formRegister = this.formBuilder.group({
         email: ['', Validators.required],
+        userName: ['', Validators.required],
         secret: ['', Validators.required]
     });
 
@@ -98,6 +101,7 @@ onRegister() {
       return;
   }
   this.loginUser.email = this.formRegister.controls.email.value;
+  this.loginUser.userName = this.formRegister.controls.userName.value;
   this.loginUser.secret = this.formRegister.controls.secret.value;
   this.ionLoaderService.simpleLoader().then(()=>{
   this.authenticationService.register(this.loginUser)

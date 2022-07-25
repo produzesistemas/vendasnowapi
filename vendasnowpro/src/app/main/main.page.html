@@ -3,30 +3,18 @@
     <ion-menu contentId="main-content" type="overlay">
       <ion-content>
         <ion-list id="inbox-list">
-          <ion-list-header>Oxidu</ion-list-header>
-          <ion-note>produzesistemas@gmail.com</ion-note>
+          <ion-list-header *ngIf="currentUser">{{ currentUser.userName }}</ion-list-header>
+          <ion-note *ngIf="currentUser"> {{ currentUser.email }} </ion-note>
           <ion-menu-toggle auto-hide="false">
             <ion-item routerDirection="root" lines="none" detail="false" [routerLink]="['/home']" routerLinkActive="selected">
               <ion-icon slot="start" [ios]="'home-outline'" [md]="'home-sharp'"></ion-icon>
               <ion-label>Home</ion-label>
             </ion-item>
-          </ion-menu-toggle>
-          <!-- <div *ngFor="let p of lstCategorys; let i = index">
-            <ion-item (click)="sidemenuClick(p)" routerDirection="root" [routerLink]="" lines="none" detail="false"
-              routerLinkActive="selected">
-              <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
-              <ion-label>{{ p.description }}</ion-label>
+            <ion-item (click)="logout()" routerDirection="root" lines="none" detail="false" [routerLink]="['']">
+              <ion-icon slot="start" [ios]="'log-out-outline'" [md]="'log-out-sharp'"></ion-icon>
+              <ion-label>Desconectar</ion-label>
             </ion-item>
-
-            <div *ngIf="p.subcategorys.length > 0 && p.open">
-              <ion-menu-toggle auto-hide="false">
-                <ion-item   (click)="filter(sub)" *ngFor="let sub of p.subcategorys;" routerDirection="root" [routerLink]=""
-                  lines="none" detail="false" routerLinkActive="selected">
-                  <ion-label>{{ sub.description }}</ion-label>
-                </ion-item>
-              </ion-menu-toggle>
-            </div>
-          </div> -->
+          </ion-menu-toggle>
         </ion-list>
       </ion-content>
     </ion-menu>

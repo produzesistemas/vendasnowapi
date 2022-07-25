@@ -34,6 +34,15 @@
       <form [formGroup]="formRegister">
         <ion-list>
           <ion-item>
+            <ion-label fixed>Nome do usuário</ion-label>
+            <ion-input type="text" formControlName="userName"></ion-input>
+            <div *ngIf="submittedRegister && fr.userName.errors">
+              <ion-text color="danger" *ngIf="fr.userName.errors.required">
+                * Informe o nome do usuário
+              </ion-text>
+            </div>
+          </ion-item>
+          <ion-item>
             <ion-label fixed>E-mail</ion-label>
             <ion-input type="text" formControlName="email"></ion-input>
             <div *ngIf="submittedRegister && fr.email.errors">
