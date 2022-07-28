@@ -37,14 +37,12 @@ export class LoginPage {
     get ff() { return this.formForgot.controls; }
 
     ngOnInit() {
-      this.authenticationService.getObject().then((data: any) => {
+      this.authenticationService.getCurrentUser().then((data: any) => {
         if (data !== null) {
-          this.currentUser = data;
           this.router.navigateByUrl('/main', { replaceUrl: true });
         }
       });
     
-
       this.form = this.formBuilder.group({
           email: ['', Validators.required],
           secret: ['', Validators.required]

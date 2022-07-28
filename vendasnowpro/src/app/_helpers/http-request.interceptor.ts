@@ -8,6 +8,7 @@ import { AuthenticationService } from '../_services/authentication.service';
 import { environment } from 'src/environments/environment';
 import { LoadingController, Platform, ToastController } from '@ionic/angular';
 import { IonLoadingService } from '../_services/ion-loading.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
@@ -17,6 +18,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
         private authenticationService: AuthenticationService,
         // private toastr: ToastrService,
         public toastController: ToastController,
+        private router: Router,
         public loadingController: LoadingController
         // private spinner: NgxSpinnerService
         ) {
@@ -42,8 +44,8 @@ export class HttpRequestInterceptor implements HttpInterceptor {
                     // this.toastr.error('Acesso negado.', 'Atenção!');
                     // this.authenticationService.logout();
                     this.presentToast(err.error);
-                    localStorage.clear();
-                    location.reload();
+                    this.authenticationService.clear();
+                    this.router.navigate(['/login']);
                 }
 
                 if (err.status === 400) {

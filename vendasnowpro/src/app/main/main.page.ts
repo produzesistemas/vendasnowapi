@@ -18,9 +18,8 @@ export class MainPage implements OnInit {
 
   ngOnInit() {
     this.title = "Home";
-    this.authenticationService.getObject().then((data: any) => {
+    this.authenticationService.getCurrentUser().then((data: any) => {
       this.currentUser = data;
-
     });
   }
 

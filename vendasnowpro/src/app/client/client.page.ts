@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { AuthenticationService } from '../_services/authentication.service';
 import { IonLoadingService } from '../_services/ion-loading.service';
+import { ClientService } from '../_services/client.service';
+import { FilterDefaultModel } from '../_model/filter-default-model';
 
 @Component({
   selector: 'app-client',
@@ -13,22 +15,28 @@ import { IonLoadingService } from '../_services/ion-loading.service';
 export class ClientPage {
 
   currentUser;
+  public clients = [];
   constructor(
     private authenticationService: AuthenticationService,
     private router: Router,
     public toastController: ToastController,
+    public clientService: ClientService,
     private ionLoaderService: IonLoadingService,
     private formBuilder: FormBuilder
     ) {}
 
     ngOnInit() {
-      this.authenticationService.getObject().then((data: any) => {
-        if (data !== null) {
-          this.currentUser = data;
-          
-        } else {
-            this.router.navigateByUrl('/login', { replaceUrl: true });
-        }
+      // this.authenticationService.getObject().then((data: any) => {
+      //   if (data !== null) {
+      //     this.currentUser = data;
+      //   } else {
+      //       this.router.navigateByUrl('/login', { replaceUrl: true });
+      //   }
+      // });
+
+      const filter: FilterDefaultModel = new FilterDefaultModel();
+      this.clientService.getByFilter(filter).subscribe(clients => {
+        this.clients = clients;
       });
     
   }

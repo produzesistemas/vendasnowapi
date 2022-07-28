@@ -10,20 +10,20 @@ export class ClientService extends GenericHttpService<Client> {
         super(http);
     }
 
-    getAll() {
-        return this.http.get<Client[]>(`${this.getUrlApi()}Client/getAll`);
-    }
+    getByFilter(filter: any) {
+        return this.postAll('client/filter', filter);
+      }
 
     deleteById(entity) {
-        return this.post('Client/delete', entity);
+        return this.post('client/delete', entity);
   }
 
   active(entity) {
-    return this.post('Client/active', entity);
+    return this.post('client/active', entity);
  }
 
  save(entity) {
-    return this.post('Client/save', entity);
+    return this.post('client/save', entity);
  }
 
 }

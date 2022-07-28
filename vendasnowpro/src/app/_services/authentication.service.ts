@@ -11,27 +11,16 @@ import { Storage } from '@capacitor/storage';
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService extends GenericHttpService<any>{
   protected baseUrl = `${environment.urlApi}`;
-
+  // currentUser: any;
+  isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
+  currentAccessToken = null;
   constructor(private http: HttpClient) {
     super(http);
   }
 
   logout() {
     this.clear();
-    // localStorage.removeItem('vendasnow_user');
   }
-
-  // addCurrentUser(user) {
-  //   localStorage.setItem('vendasnow_user', JSON.stringify(user));
-  // }
-
-  // clearUser() {
-  //   localStorage.removeItem('vendasnow_user');
-  // }
-
-  // getCurrentUser() {
-  //   return new BehaviorSubject<any>(JSON.parse(localStorage.getItem('vendasnow_user'))).getValue();
-  // }
 
   login(user) {
     return this.postAll('account/loginVendasNow', user);
@@ -53,15 +42,15 @@ export class AuthenticationService extends GenericHttpService<any>{
     await Storage.set({ key: 'vendasnow_user', value: JSON.stringify(value) });
   }
 
-  async getObject(): Promise<{ value: any }> {
-
-    
+  async getCurrentUser() {
     const ret = await Storage.get({ key: 'vendasnow_user' });
     return JSON.parse(ret.value);
   }
-
+  
   async clear() {
     await Storage.clear();
   }
+
+  
 
 }

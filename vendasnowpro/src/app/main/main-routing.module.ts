@@ -15,6 +15,10 @@ const routes: Routes = [
         path: '',
         redirectTo: '/main/first-page',
         pathMatch: 'full'
+      },
+      {
+        path: 'client',
+        loadChildren: () => import('../client/client.page.module').then(m => m.ClientPageModule)
       }
     ]
   }

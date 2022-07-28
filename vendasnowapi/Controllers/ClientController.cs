@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Models.Filters;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -15,22 +16,22 @@ namespace vendasnowapi.Controllers
     [ApiController]
     public class ClientController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> userManager;
+        //private readonly UserManager<ApplicationUser> userManager;
         private IClientRepository ClientRepository;
         public ClientController(
-    UserManager<ApplicationUser> userManager,
+    //UserManager<ApplicationUser> userManager,
    IClientRepository ClientRepository
 
     )
         {
             this.ClientRepository = ClientRepository;
-            this.userManager = userManager;
+            //this.userManager = userManager;
         }
 
-        [HttpGet()]
-        [Route("getAll")]
+        [HttpPost()]
+        [Route("filter")]
         [Authorize()]
-        public IActionResult GetAll()
+        public IActionResult GetByFilter(FilterDefault filter)
         {
             try
             {
@@ -40,16 +41,15 @@ namespace vendasnowapi.Controllers
                 {
                     return BadRequest("Identificação do usuário não encontrada.");
                 }
-
                 Expression<Func<Client, bool>> p1;
                 var predicate = PredicateBuilder.New<Client>();
-                p1 = p => p.AspNetUsersId.Equals(id);
-                predicate = predicate.And(p1);
-                return new JsonResult(ClientRepository.Where(predicate).ToList());
+                p1 = p => p.AspNetUsersId == id;
+                    predicate = predicate.And(p1);
+                    return new JsonResult(ClientRepository.Where(predicate).ToList());
             }
             catch (Exception ex)
             {
-                return BadRequest(string.Concat("Falha no carregamento dos Clientes: ", ex.Message));
+                return BadRequest(string.Concat("Falha no carregamento dos Horários de funcionamento: ", ex.Message));
             }
         }
 

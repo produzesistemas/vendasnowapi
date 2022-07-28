@@ -4,7 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClientPage } from './client.page';
 
-import { ClientPageRoutingModule } from './client-routing.module';
+import { ClientPageRoutingModule } from './client.page-routing.module';
 
 
 @NgModule({
