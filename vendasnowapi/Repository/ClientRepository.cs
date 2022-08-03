@@ -37,7 +37,9 @@ namespace Repositorys
 
         public void Update(Client entity)
         {
-            _context.Entry(entity).State = EntityState.Modified;
+            var entityBase = _context.Client.Single(x => x.Id == entity.Id);
+            entityBase.Name = entity.Name;
+            _context.Entry(entityBase).State = EntityState.Modified;
             _context.SaveChanges();
         }
 

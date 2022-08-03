@@ -6,7 +6,6 @@ namespace Models
     public class Client : BaseEntity
     {
         public string Name { get; set; }
-        public string Telephone { get; set; }
         public string AspNetUsersId { get; set; }
 
 

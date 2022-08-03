@@ -16,16 +16,13 @@ namespace vendasnowapi.Controllers
     [ApiController]
     public class ClientController : ControllerBase
     {
-        //private readonly UserManager<ApplicationUser> userManager;
         private IClientRepository ClientRepository;
         public ClientController(
-    //UserManager<ApplicationUser> userManager,
    IClientRepository ClientRepository
 
     )
         {
             this.ClientRepository = ClientRepository;
-            //this.userManager = userManager;
         }
 
         [HttpPost()]
@@ -69,10 +66,7 @@ namespace vendasnowapi.Controllers
 
                 if (client.Id > decimal.Zero)
                 {
-                    var clientBase = ClientRepository.Get(client.Id);
-                    clientBase.Name = client.Name;
-                    clientBase.Telephone = client.Telephone;
-                    ClientRepository.Update(clientBase);
+                    ClientRepository.Update(client);
                 }
                 else
                 {
