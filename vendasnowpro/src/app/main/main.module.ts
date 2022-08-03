@@ -12,12 +12,14 @@ import { MainPage } from './main.page';
 // import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 // import { RouteReuseStrategy } from '@angular/router';
 
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     MainPageRoutingModule,
+
     // HttpClientModule
   ],
   // providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

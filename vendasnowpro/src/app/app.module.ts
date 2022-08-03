@@ -24,7 +24,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
       // BrowserAnimationsModule,
       // FormsModule,
       // ReactiveFormsModule,
-      HttpClientModule
+      HttpClientModule,
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },

@@ -3,7 +3,7 @@
       <ion-buttons slot="start">
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
-      <ion-title></ion-title>
+      <ion-title>Clientes</ion-title>
     </ion-toolbar>
   </ion-header>
   
@@ -11,17 +11,65 @@
     <ion-header collapse="condense">
       <ion-toolbar>
         <ion-title size="large">Home</ion-title>
+
+
       </ion-toolbar>
     </ion-header>
+    <ion-searchbar
+  [(ngModel)]="query"
+  placeholder="Busque pelo nome"
+  showCancelButton="focus"
+  (ionInput)="onInput($event)"
+  (ionCancel)="onCancel($event)">
+</ion-searchbar>
+
 
     <div id="container">
-
-        <ion-list>
-            <ion-item *ngFor="let p of clients; let i = index">
-              <ion-label>{{ p.name }}</ion-label>
-            </ion-item>
-            
-          </ion-list>
+      <ion-card *ngFor="let p of clients; let i = index">
+        <ion-card-content class="ion-margin-top">
+          <ion-card-title>{{ p.name }}</ion-card-title>
+          <ion-card-subtitle>{{ p.telephone }}</ion-card-subtitle>
+        </ion-card-content>
+      </ion-card>   
       </div>
+
+      <ion-modal>
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-button (click)="closeModal()">Fechar</ion-button>
+              </ion-buttons>
+              <ion-title>Cadastro de Cliente</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="confirm()" [strong]="true">Salvar</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding">
+            <form [formGroup]="form">
+            <ion-item>
+              <ion-label position="stacked">Nome</ion-label>
+              <ion-input type="text" placeholder="nome do cliente" formControlName="name"></ion-input>
+              <div *ngIf="submitted && f.name.errors">
+                <ion-text color="danger" *ngIf="f.name.errors.required">
+                  * Informe o nome do usuário
+                </ion-text>
+              </div>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked">Telefone</ion-label>
+              <ion-input type="text" placeholder="telefone do cliente" formControlName="telephone"></ion-input>
+            </ion-item>
+          </form>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+
+      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button (click)="openModal()">
+          <ion-icon name="add-outline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
 
   </ion-content>
