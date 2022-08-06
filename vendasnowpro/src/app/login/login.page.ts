@@ -5,6 +5,8 @@ import { ToastController } from '@ionic/angular';
 import { LoginUser } from '../_model/login-user-model';
 import { AuthenticationService } from '../_services/authentication.service';
 import { IonLoadingService } from '../_services/ion-loading.service';
+import { Network } from '@capacitor/network';
+import { PluginListenerHandle } from '@capacitor/core';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +26,9 @@ export class LoginPage {
   public isLogin = true;
   public isForgot = false;
   currentUser;
+  networkStatus: any;
+  networkListener: PluginListenerHandle;
+
   constructor(
     private authenticationService: AuthenticationService,
     private router: Router,
@@ -37,6 +42,12 @@ export class LoginPage {
     get ff() { return this.formForgot.controls; }
 
     ngOnInit() {
+
+      this.networkListener = Network.addListener('networkStatusChange', (status) => {
+        this.networkStatus = status;
+        console.log('Network status changed', status);
+      });
+
       this.authenticationService.getCurrentUser().then((data: any) => {
         if (data !== null) {
           this.router.navigateByUrl('/main', { replaceUrl: true });
@@ -62,6 +73,10 @@ export class LoginPage {
 
   }
 
+  checkInternetConnection() {
+
+  }
+
   async presentToast(error: string){
     const toast = await this.toastController.create({
       message: error,
@@ -72,7 +87,13 @@ export class LoginPage {
     toast.present();
   }
 
-  onLogin() {
+  async onLogin() {
+
+    this.networkStatus = await Network.getStatus();
+    if (this.networkStatus.connected === false) {
+      return this.presentToast("Sem internet");
+    }
+
     this.submitted = true;
     if (this.form.invalid) {
         return;

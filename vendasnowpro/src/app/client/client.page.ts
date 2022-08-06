@@ -6,7 +6,6 @@ import { AuthenticationService } from '../_services/authentication.service';
 import { IonLoadingService } from '../_services/ion-loading.service';
 import { ClientService } from '../_services/client.service';
 import { FilterDefaultModel } from '../_model/filter-default-model';
-import { startWith } from 'rxjs/operators';
 import { Client } from '../_model/client-model';
 
 @Component({
