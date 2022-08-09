@@ -42,12 +42,6 @@ export class LoginPage {
     get ff() { return this.formForgot.controls; }
 
     ngOnInit() {
-
-      this.networkListener = Network.addListener('networkStatusChange', (status) => {
-        this.networkStatus = status;
-        console.log('Network status changed', status);
-      });
-
       this.authenticationService.getCurrentUser().then((data: any) => {
         if (data !== null) {
           this.router.navigateByUrl('/main', { replaceUrl: true });
@@ -73,25 +67,20 @@ export class LoginPage {
 
   }
 
-  checkInternetConnection() {
-
-  }
-
   async presentToast(error: string){
     const toast = await this.toastController.create({
       message: error,
       duration: 2000,
-      position: 'middle'
+      position: 'top'
     });
 
     toast.present();
   }
 
   async onLogin() {
-
     this.networkStatus = await Network.getStatus();
     if (this.networkStatus.connected === false) {
-      return this.presentToast("Sem internet");
+      return this.presentToast("Dispositivo sem internet. Verifique a conexão e tente novamente.");
     }
 
     this.submitted = true;
@@ -107,14 +96,17 @@ export class LoginPage {
         this.authenticationService.setObject(result);
         this.ionLoaderService.dismissLoader();
         this.router.navigateByUrl('/main', { replaceUrl: true });
-        // return this.router.navigate(['/main']);
     });
   });
 }
 
 
 
-onRegister() {
+async onRegister() {
+  this.networkStatus = await Network.getStatus();
+  if (this.networkStatus.connected === false) {
+    return this.presentToast("Dispositivo sem internet. Verifique a conexão e tente novamente.");
+  }
   this.submittedRegister = true;
   if (this.formRegister.invalid) {
       return;

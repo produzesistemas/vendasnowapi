@@ -7,7 +7,8 @@ import { IonLoadingService } from '../_services/ion-loading.service';
 import { ClientService } from '../_services/client.service';
 import { FilterDefaultModel } from '../_model/filter-default-model';
 import { Client } from '../_model/client-model';
-
+import { Network } from '@capacitor/network';
+import { PluginListenerHandle } from '@capacitor/core';
 @Component({
   selector: 'app-client',
   templateUrl: 'client.page.html',
@@ -15,7 +16,7 @@ import { Client } from '../_model/client-model';
 })
 export class ClientPage {
   @ViewChild(IonModal) modal: IonModal;
-  currentUser;
+  currentUser: any;
   public clients = [];
   public client: Client = new Client();
   public allClients = [];
@@ -23,6 +24,8 @@ export class ClientPage {
   public searchField: FormControl;
   public query: any;
   public submitted = false;
+  networkStatus: any;
+  networkListener: PluginListenerHandle;
   constructor(
     private authenticationService: AuthenticationService,
     private router: Router,
@@ -35,14 +38,15 @@ export class ClientPage {
 
   get f() { return this.form.controls; }
 
-  ngOnInit() {
-    // this.authenticationService.getObject().then((data: any) => {
-    //   if (data !== null) {
-    //     this.currentUser = data;
-    //   } else {
-    //       this.router.navigateByUrl('/login', { replaceUrl: true });
-    //   }
-    // });
+  async ngOnInit() {
+    this.currentUser = await this.authenticationService.getCurrentUser();
+    if (this.currentUser === null) {
+      this.router.navigateByUrl('/login', { replaceUrl: true });
+    }
+    this.networkStatus = await Network.getStatus();
+    if (this.networkStatus.connected === false) {
+      return this.presentToast("Dispositivo sem internet. Verifique a conexão e tente novamente.");
+    }
 
     this.form = this.formBuilder.group({
       id: [''],
@@ -79,7 +83,7 @@ export class ClientPage {
     const toast = await this.toastController.create({
       message: error,
       duration: 2000,
-      position: 'middle'
+      position: 'top'
     });
 
     toast.present();
