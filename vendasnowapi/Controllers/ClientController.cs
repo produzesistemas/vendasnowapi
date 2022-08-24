@@ -50,10 +50,36 @@ namespace vendasnowapi.Controllers
             }
         }
 
+        [HttpGet()]
+        [Route("getAll")]
+        [Authorize()]
+        public IActionResult GetAll()
+        {
+            try
+            {
+                ClaimsPrincipal currentUser = this.User;
+                var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
+                if (id == null)
+                {
+                    return BadRequest("Identificação do usuário não encontrada.");
+                }
+
+                Expression<Func<Client, bool>> p1;
+                var predicate = PredicateBuilder.New<Client>();
+                p1 = p => p.AspNetUsersId.Equals(id);
+                predicate = predicate.And(p1);
+                return new JsonResult(ClientRepository.Where(predicate).ToList());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(string.Concat("Falha no carregamento dos Clientes: ", ex.Message));
+            }
+        }
+
         [HttpPost()]
         [Route("save")]
         [Authorize()]
-        public IActionResult Save(Client client)
+        public IActionResult Save([FromBody] Client client)
         {
             try
             {

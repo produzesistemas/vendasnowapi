@@ -351,7 +351,7 @@ C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\hostfxr.dll
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\hostpolicy.dll
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\mscordaccore.dll
-C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\mscordaccore_x86_x86_4.700.22.30802.dll
+C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\mscordaccore_x86_x86_4.700.22.36202.dll
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\mscordbi.dll
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\mscorrc.debug.dll
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\mscorrc.dll
@@ -409,6 +409,7 @@ C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\assets\icone_loja_250.png
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\assets\logo.png
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\assets\logo_arredondado.png
+C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\assets\logo_arredondado_app.png
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\assets\logo_black_produze.gif
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\assets\logo_daju.png
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\PubTmp\Out\ClientApp\dist\financeiroSPA\assets\logo_vendasnow.png

@@ -415,4 +415,4 @@ C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\vendasnowapi.dll
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\vendasnowapi.pdb
 C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\obj\Release\netcoreapp3.1\win-x86\vendasnowapi.genruntimeconfig.cache
-C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\bin\Release\netcoreapp3.1\win-x86\mscordaccore_x86_x86_4.700.22.30802.dll
+C:\Users\paulo.sergio\Documents\vendasnowapi\vendasnowapi\bin\Release\netcoreapp3.1\win-x86\mscordaccore_x86_x86_4.700.22.36202.dll
