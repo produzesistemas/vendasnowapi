@@ -78,7 +78,6 @@ namespace vendasnowapi.Controllers
 
         [HttpPost()]
         [Route("save")]
-        [Authorize()]
         public IActionResult Save([FromBody] Client client)
         {
             try
