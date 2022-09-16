@@ -14,16 +14,17 @@ namespace vendasnowapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientController : ControllerBase
+    public class ProductController : ControllerBase
     {
-        private IClientRepository ClientRepository;
-        public ClientController(
-   IClientRepository ClientRepository
+        private IProductRepository ProductRepository;
+        public ProductController(
+   IProductRepository ProductRepository
 
     )
         {
-            this.ClientRepository = ClientRepository;
+            this.ProductRepository = ProductRepository;
         }
+
 
         [HttpPost()]
         [Route("getPagination")]
@@ -38,11 +39,11 @@ namespace vendasnowapi.Controllers
                 {
                     return BadRequest("Identificação do usuário não encontrada.");
                 }
-                Expression<Func<Client, bool>> p1;
-                var predicate = PredicateBuilder.New<Client>();
+                Expression<Func<Product, bool>> p1;
+                var predicate = PredicateBuilder.New<Product>();
                 p1 = p => p.AspNetUsersId.Equals(id);
                 predicate = predicate.And(p1);
-                return new JsonResult(ClientRepository.GetPagination(predicate, filter.SizePage).ToList());
+                return new JsonResult(ProductRepository.GetPagination(predicate, filter.SizePage).ToList());
             }
             catch (Exception ex)
             {
@@ -64,11 +65,11 @@ namespace vendasnowapi.Controllers
                     return BadRequest("Identificação do usuário não encontrada.");
                 }
 
-                Expression<Func<Client, bool>> p1;
-                var predicate = PredicateBuilder.New<Client>();
+                Expression<Func<Product, bool>> p1;
+                var predicate = PredicateBuilder.New<Product>();
                 p1 = p => p.AspNetUsersId.Equals(id);
                 predicate = predicate.And(p1);
-                return new JsonResult(ClientRepository.Where(predicate).ToList());
+                return new JsonResult(ProductRepository.Where(predicate).ToList());
             }
             catch (Exception ex)
             {
@@ -79,7 +80,7 @@ namespace vendasnowapi.Controllers
         [HttpPost()]
         [Route("save")]
         [Authorize()]
-        public IActionResult Save([FromBody] Client client)
+        public IActionResult Save([FromBody] Product product)
         {
             try
             {
@@ -90,36 +91,36 @@ namespace vendasnowapi.Controllers
                     return BadRequest("Identificação do usuário não encontrada.");
                 }
 
-                if (client.Id > decimal.Zero)
+                if (product.Id > decimal.Zero)
                 {
-                    ClientRepository.Update(client);
+                    ProductRepository.Update(product);
                 }
                 else
                 {
-                    client.AspNetUsersId = id;
-                    ClientRepository.Insert(client);
+                    product.AspNetUsersId = id;
+                    ProductRepository.Insert(product);
                 }
                 return new OkResult();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(string.Concat("Falha no cadastro do produto: ", ex.Message));
             }
         }
 
         [HttpPost()]
         [Route("delete")]
         [Authorize()]
-        public IActionResult Delete([FromBody] Client client)
+        public IActionResult Delete([FromBody] Product product)
         {
             try
             {
-                ClientRepository.Delete(client.Id);
+                ProductRepository.Delete(product.Id);
                 return new OkResult();
             }
             catch (Exception ex)
             {
-                return BadRequest(string.Concat("Falha na exclusão do cliente: ", ex.Message));
+                return BadRequest(string.Concat("Falha na exclusão do produto: ", ex.Message));
 
             }
         }

@@ -56,6 +56,8 @@ namespace vendasnowapi
             })
                          .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddScoped(typeof(IClientRepository), typeof(ClientRepository));
+            services.AddScoped(typeof(IProductRepository), typeof(ProductRepository));
+            services.AddScoped(typeof(ISaleRepository), typeof(SaleRepository));
 
 
             services.AddControllersWithViews();
