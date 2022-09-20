@@ -23,12 +23,15 @@ namespace Models
             modelBuilder.Entity<SaleProduct>().HasKey(c => c.Id);
             modelBuilder.Entity<SaleService>().HasKey(c => c.Id);
             modelBuilder.Entity<Account>().HasKey(c => c.Id);
-            modelBuilder.Entity<Sale>().HasMany(c => c.SaleProducts);
-            modelBuilder.Entity<Sale>().HasMany(c => c.SaleServices);
-            modelBuilder.Entity<Sale>().HasMany(c => c.Accounts);
-            modelBuilder.Entity<Product>().HasMany(c => c.SaleProducts)
+            modelBuilder.Entity<Sale>().HasMany(c => c.SaleProduct).WithOne(b => b.Sale).HasForeignKey(c => c.SaleId);
+            modelBuilder.Entity<Sale>().HasMany(c => c.SaleService).WithOne(b => b.Sale).HasForeignKey(c => c.SaleId); 
+            modelBuilder.Entity<Sale>().HasMany(c => c.Account).WithOne(b => b.Sale).HasForeignKey(c => c.SaleId);
+            modelBuilder.Entity<Product>().HasMany(c => c.SaleProduct)
                 .WithOne(b => b.Product)
                 .HasForeignKey(c => c.ProductId);
+
+            modelBuilder.Entity<SaleProduct>().HasOne(c => c.Sale);
+            modelBuilder.Entity<SaleService>().HasOne(c => c.Sale);
 
 
             base.OnModelCreating(modelBuilder);

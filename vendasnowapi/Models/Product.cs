@@ -11,6 +11,6 @@ namespace Models
         public decimal Value { get; set; }
         public decimal? CostValue { get; set; }
         [NotMapped]
-        public List<SaleProduct> SaleProducts { get; set; }
+        public List<SaleProduct> SaleProduct { get; set; }
     }
 }

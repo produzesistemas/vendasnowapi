@@ -14,11 +14,11 @@ namespace Models
         public DateTime CreateDate { get; set; }
 
         [NotMapped]
-        public virtual List<SaleProduct> SaleProducts { get; set; }
+        public virtual List<SaleProduct> SaleProduct { get; set; }
         [NotMapped]
-        public virtual List<SaleService> SaleServices { get; set; }
+        public virtual List<SaleService> SaleService { get; set; }
         [NotMapped]
-        public virtual List<Account> Accounts { get; set; }
+        public virtual List<Account> Account { get; set; }
         [NotMapped]
         public virtual PaymentCondition PaymentCondition { get; set; }
         [NotMapped]
