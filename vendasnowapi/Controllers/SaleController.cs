@@ -54,7 +54,7 @@ namespace vendasnowapi.Controllers
         [HttpPost()]
         [Route("getAllByMonthAndYear")]
         [Authorize()]
-        public IActionResult GetAllByMonthAndYear(FilterDefault filter)
+        public IActionResult GetAllByMonthAndYear([FromBody] FilterDefault filter)
         {
             try
             {
