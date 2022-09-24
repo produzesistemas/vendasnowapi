@@ -3,6 +3,8 @@ using System.Linq;
 using UnitOfWork;
 using System.Linq.Expressions;
 using System;
+using Microsoft.EntityFrameworkCore;
+
 namespace Repositorys
 {
     public class SaleRepository : ISaleRepository, IDisposable
@@ -24,7 +26,13 @@ namespace Repositorys
 
         public Sale Get(int id)
         {
-            return _context.Sale.Single(x => x.Id == id);
+            return _context.Sale
+                .Include(x => x.PaymentCondition)
+                .Include(x => x.Account)
+                .Include(x => x.Client)
+                .Include(x => x.SaleProduct)
+                .Include(x => x.SaleService)
+                .Single(x => x.Id == id);
         }
 
         public void Insert(Sale entity)
@@ -35,7 +43,13 @@ namespace Repositorys
 
         public IQueryable<Sale> Where(Expression<Func<Sale, bool>> expression)
         {
-            return _context.Sale.Where(expression).AsQueryable();
+            return _context.Sale
+                .Include(x => x.PaymentCondition)
+                .Include(x => x.Account)
+                .Include(x => x.Client)
+                .Include(x => x.SaleProduct)
+                .Include(x => x.SaleService)
+                .Where(expression).AsQueryable();
         }
 
         protected virtual void Dispose(bool disposing)

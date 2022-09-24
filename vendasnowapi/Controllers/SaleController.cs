@@ -110,7 +110,7 @@ namespace vendasnowapi.Controllers
         [HttpPost()]
         [Route("save")]
         [Authorize()]
-        public IActionResult Save([FromBody] Sale sale)
+        public IActionResult Save(Sale sale)
         {
             try
             {
