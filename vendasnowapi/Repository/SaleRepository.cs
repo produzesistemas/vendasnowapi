@@ -20,19 +20,14 @@ namespace Repositorys
         public void Delete(int id)
         {
             var entity = _context.Sale.Single(x => x.Id == id);
+            var accounts = _context.Account.Where(c => c.SaleId == id);
+            var products = _context.SaleProduct.Where(c => c.SaleId == id);
+            var services = _context.SaleService.Where(c => c.SaleId == id);
+            _context.RemoveRange(accounts);
+            _context.RemoveRange(products);
+            _context.RemoveRange(services);
             _context.Remove(entity);
             _context.SaveChanges();
-        }
-
-        public Sale Get(int id)
-        {
-            return _context.Sale
-                .Include(x => x.PaymentCondition)
-                .Include(x => x.Account)
-                .Include(x => x.Client)
-                .Include(x => x.SaleProduct)
-                .Include(x => x.SaleService)
-                .Single(x => x.Id == id);
         }
 
         public void Insert(Sale entity)
@@ -47,7 +42,7 @@ namespace Repositorys
                 .Include(x => x.PaymentCondition)
                 .Include(x => x.Account)
                 .Include(x => x.Client)
-                .Include(x => x.SaleProduct)
+                .Include(x => x.SaleProduct).ThenInclude(x => x.Product)
                 .Include(x => x.SaleService)
                 .Where(expression).AsQueryable();
         }

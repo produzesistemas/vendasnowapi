@@ -6,7 +6,6 @@ namespace UnitOfWork
 {
     public interface ISaleRepository : IDisposable
     {
-        Sale Get(int id);
         IQueryable<Sale> Where(Expression<Func<Sale, bool>> expression);
         void Delete(int id);
         void Insert(Sale entity);

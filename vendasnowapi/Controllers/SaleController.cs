@@ -1,6 +1,5 @@
 ﻿using LinqKit;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Models.Filters;
@@ -147,5 +146,6 @@ namespace vendasnowapi.Controllers
 
             }
         }
+
     }
 }
