@@ -16,10 +16,7 @@ namespace vendasnowapi.Controllers
     public class SaleController : ControllerBase
     {
         private ISaleRepository SaleRepository;
-        public SaleController(
-   ISaleRepository SaleRepository
-
-    )
+        public SaleController(ISaleRepository SaleRepository)
         {
             this.SaleRepository = SaleRepository;
         }
@@ -126,7 +123,7 @@ namespace vendasnowapi.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(string.Concat("Falha no cadastro do produto: ", ex.Message));
+                return BadRequest(string.Concat("Falha no cadastro da venda: ", ex.Message));
             }
         }
 
