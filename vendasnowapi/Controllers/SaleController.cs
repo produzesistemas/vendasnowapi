@@ -64,11 +64,17 @@ namespace vendasnowapi.Controllers
                 var predicate = PredicateBuilder.New<Sale>();
                 p1 = p => p.AspNetUsersId.Equals(id);
                 predicate = predicate.And(p1);
-                p2 = p => p.SaleDate.Month == filter.Month;
-                predicate = predicate.And(p2);
-                p3 = p => p.SaleDate.Year == filter.Year;
-                predicate = predicate.And(p3);
+                if (filter.Month > decimal.Zero)
+                {
+                    p2 = p => p.SaleDate.Month == filter.Month;
+                    predicate = predicate.And(p2);
+                }
 
+                if (filter.Year > decimal.Zero)
+                {
+                    p3 = p => p.SaleDate.Year == filter.Year;
+                    predicate = predicate.And(p3);
+                }
                 return new JsonResult(SaleRepository.Where(predicate).ToList());
             }
             catch (Exception ex)
