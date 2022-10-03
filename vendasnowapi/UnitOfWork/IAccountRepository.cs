@@ -8,5 +8,6 @@ namespace UnitOfWork
     {
         IQueryable<Account> Where(Expression<Func<Account, bool>> expression);
         void Update(Account entity);
+        Account Get(int id);
     }
 }

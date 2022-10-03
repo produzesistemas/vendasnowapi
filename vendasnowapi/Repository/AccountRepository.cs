@@ -54,10 +54,16 @@ namespace Repositorys
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-        public IQueryable<Client> GetPagination(Expression<Func<Client, bool>> expression, int sizePage)
+                
+        public Account Get(int id)
         {
-            return _context.Client.Where(expression).Take(sizePage);
+            return _context.Account.Include(x => x.Sale)
+                .ThenInclude(x => x.Client)
+                .Include(x => x.Sale)
+                .ThenInclude(x => x.PaymentCondition).Single(x => x.Id == id);
         }
+
+        
+
     }
 }

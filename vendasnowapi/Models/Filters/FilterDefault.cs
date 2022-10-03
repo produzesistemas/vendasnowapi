@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Models.Filters
 {
     public class FilterDefault
@@ -10,9 +12,7 @@ namespace Models.Filters
 
         public int SizePage { get; set; }
 
-        public int LojaId { get; set; }
-        public int StatusPedidoId { get; set; }
-        public int StatusPagamentoPedidoId { get; set; }
+        public DateTime? DueDate { get; set; }
 
     }
 }
