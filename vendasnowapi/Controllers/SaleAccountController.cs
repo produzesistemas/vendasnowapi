@@ -38,7 +38,7 @@ namespace vendasnowapi.Controllers
                 {
                     return BadRequest("Identificação do usuário não encontrada.");
                 }
-                Expression<Func<Account, bool>> p1, p2, p3;
+                Expression<Func<Account, bool>> p1, p2, p3, p4;
                 var predicate = PredicateBuilder.New<Account>();
                 p1 = p => p.Sale.AspNetUsersId.Equals(id);
                 predicate = predicate.And(p1);
@@ -46,6 +46,12 @@ namespace vendasnowapi.Controllers
                 predicate = predicate.And(p2);
                 p3 = p => p.DueDate.Year == filter.Year;
                 predicate = predicate.And(p3);
+
+                if (filter.Status > decimal.Zero)
+                {
+                    p4 = p => p.Status == filter.Status;
+                    predicate = predicate.And(p4);
+                }
 
                 return new JsonResult(AccountRepository.Where(predicate).ToList());
             }
@@ -69,6 +75,7 @@ namespace vendasnowapi.Controllers
                 {
                     return BadRequest("Identificação do usuário não encontrada.");
                 }
+                account.DateOfPayment = DateTime.Now;
                 AccountRepository.Update(account);
                 return new OkResult();
             }
@@ -97,10 +104,10 @@ namespace vendasnowapi.Controllers
             }
         }
 
-        [HttpPost()]
+        [HttpGet()]
         [Route("getAllToNotification")]
         [Authorize()]
-        public IActionResult GetAllToNotification([FromBody] FilterDefault filter)
+        public IActionResult GetAllToNotification()
         {
             try
             {
@@ -110,16 +117,14 @@ namespace vendasnowapi.Controllers
                 {
                     return BadRequest("Identificação do usuário não encontrada.");
                 }
-                Expression<Func<Account, bool>> p1, p2;
+                Expression<Func<Account, bool>> p1, p2, p3;
                 var predicate = PredicateBuilder.New<Account>();
                 p1 = p => p.Sale.AspNetUsersId.Equals(id);
                 predicate = predicate.And(p1);
-
-                if (filter.DueDate.HasValue)
-                {
-                    p2 = p => p.DueDate.Date <= filter.DueDate.Value.Date;
-                    predicate = predicate.And(p2);
-                }
+                p2 = p => p.DueDate.Date <= DateTime.Now.Date;
+                predicate = predicate.And(p2);
+                p3 = p => p.Status == 1;
+                predicate = predicate.And(p3);
                 return new JsonResult(AccountRepository.Where(predicate).ToList());
             }
             catch (Exception ex)
