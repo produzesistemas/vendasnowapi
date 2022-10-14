@@ -18,6 +18,7 @@ namespace Models
         {
             modelBuilder.Entity<Plan>().HasKey(c => c.Id);
             modelBuilder.Entity<Subscription>().HasKey(c => c.Id);
+            modelBuilder.Entity<Subscription>().HasOne(c => c.Plan);
             modelBuilder.Entity<Client>().HasKey(c => c.Id);
             modelBuilder.Entity<Product>().HasKey(c => c.Id);
             modelBuilder.Entity<PaymentCondition>().HasKey(c => c.Id);

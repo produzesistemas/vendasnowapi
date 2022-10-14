@@ -64,5 +64,14 @@ namespace Repositorys
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        public Subscription GetCurrent(Expression<Func<Subscription, bool>> expression)
+        {
+            var sub = _context.Subscription.Include(x => x.Plan).Single(expression);
+            if (DateTime.Now.Date <= sub.SubscriptionDate.Date.AddDays(sub.Plan.Days)  ) {
+                return sub;
+            }
+            return null;
+        }
     }
 }

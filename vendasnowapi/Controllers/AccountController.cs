@@ -11,6 +11,8 @@ using System.Security.Claims;
 using System.Net.Mail;
 using Microsoft.AspNetCore.Hosting;
 using UnitOfWork;
+using System.Linq.Expressions;
+using LinqKit;
 
 namespace vendasnowapi.Controllers
 {
@@ -215,10 +217,20 @@ namespace vendasnowapi.Controllers
                 applicationUserDTO.Email = user.Email;
                 applicationUserDTO.UserName = user.UserName;
                 applicationUserDTO.Role = permission;
+
+                Expression<Func<Subscription, bool>> p1;
+                var predicate = PredicateBuilder.New<Subscription>();
+                p1 = p => p.AspNetUsersId.Equals(user.Id);
+                predicate = predicate.And(p1);
+
+                applicationUserDTO.Subscription = this._subscriptionRepository.GetCurrent(predicate);
                 return new JsonResult(applicationUserDTO);
             }
             catch (Exception ex)
             {
+                if (ex.Message == "Sequence contains no elements") {
+                    return BadRequest("Acesso negado! Usuário sem inscrição!");
+                };
                 return BadRequest("Falha no login! " + ex.Message);
             }
 
