@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Net.Mail;
 using Microsoft.AspNetCore.Hosting;
+using UnitOfWork;
 
 namespace vendasnowapi.Controllers
 {
@@ -20,16 +21,17 @@ namespace vendasnowapi.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
         private IConfiguration configuration;
-        private IWebHostEnvironment _hostEnvironment;
+        private ISubscriptionRepository _subscriptionRepository;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IConfiguration Configuration, IWebHostEnvironment environment)
+            ISubscriptionRepository subscriptionRepository,
+            IConfiguration Configuration)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.configuration = Configuration;
-            _hostEnvironment = environment;
+            this._subscriptionRepository = subscriptionRepository;
         }
 
         [HttpPost()]
@@ -311,7 +313,6 @@ namespace vendasnowapi.Controllers
                 }
 
                 var claims = await this.userManager.GetClaimsAsync(applicationUser);
-
                 if (!claims.Any(c => c.Value == loginUser.Code))
                 {
                     return BadRequest("Código não encontrado.");
@@ -324,6 +325,14 @@ namespace vendasnowapi.Controllers
 
                 applicationUser.EmailConfirmed = true;
                 await this.userManager.UpdateAsync(applicationUser);
+                this._subscriptionRepository.Insert(new Subscription()
+                {
+                     Active = true,
+                      AspNetUsersId = applicationUser.Id,
+                       PlanId = 1,
+                        SubscriptionDate = DateTime.Now,
+                         Value = 0
+                });
                 return Ok();
 
             }

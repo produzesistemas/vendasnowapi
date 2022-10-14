@@ -16,6 +16,8 @@ namespace Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Plan>().HasKey(c => c.Id);
+            modelBuilder.Entity<Subscription>().HasKey(c => c.Id);
             modelBuilder.Entity<Client>().HasKey(c => c.Id);
             modelBuilder.Entity<Product>().HasKey(c => c.Id);
             modelBuilder.Entity<PaymentCondition>().HasKey(c => c.Id);
@@ -47,6 +49,8 @@ namespace Models
         public DbSet<SaleService> SaleService { get; set; }
         public DbSet<Account> Account { get; set; }
         public DbSet<Sale> Sale { get; set; }
+        public DbSet<Plan> Plan { get; set; }
+        public DbSet<Subscription> Subscription { get; set; }
 
     }
 }

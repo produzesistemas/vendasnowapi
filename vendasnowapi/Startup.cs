@@ -59,6 +59,7 @@ namespace vendasnowapi
             services.AddScoped(typeof(IProductRepository), typeof(ProductRepository));
             services.AddScoped(typeof(ISaleRepository), typeof(SaleRepository));
             services.AddScoped(typeof(IAccountRepository), typeof(AccountRepository));
+            services.AddScoped(typeof(ISubscriptionRepository), typeof(SubscriptionRepository));
 
 
             services.AddControllersWithViews();
