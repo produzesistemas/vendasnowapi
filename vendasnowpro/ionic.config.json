@@ -1,7 +1,0 @@
-{
-  "name": "vendasnowpro_ionic",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
-}
