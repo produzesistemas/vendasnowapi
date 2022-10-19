@@ -203,6 +203,26 @@ namespace vendasnowapi.Controllers
                     return BadRequest("Acesso negado! Confirme sua conta pelo email!");
                 }
 
+                Expression<Func<Subscription, bool>> p1, p2;
+                var predicate = PredicateBuilder.New<Subscription>();
+                p1 = p => p.AspNetUsersId.Equals(user.Id);
+                predicate = predicate.And(p1);
+                p2 = p => p.Active == true;
+                predicate = predicate.And(p2);
+
+                var subscription = this._subscriptionRepository.GetCurrent(predicate);
+                if (subscription == null)
+                {
+                    return StatusCode(600);
+                } else
+                {
+                    if (subscription.SubscriptionDate.AddDays(subscription.Plan.Days).Date < DateTime.Now.Date)
+                    {
+                        return StatusCode(600);
+                    }
+                }
+
+
                 var claimsPrincipal = await signInManager.CreateUserPrincipalAsync(user);
                 var claims = claimsPrincipal.Claims.ToList();
                 var permission = claims.Where(c => c.Type.Contains("role")).Select(c => c.Value).FirstOrDefault();
@@ -218,12 +238,8 @@ namespace vendasnowapi.Controllers
                 applicationUserDTO.UserName = user.UserName;
                 applicationUserDTO.Role = permission;
 
-                Expression<Func<Subscription, bool>> p1;
-                var predicate = PredicateBuilder.New<Subscription>();
-                p1 = p => p.AspNetUsersId.Equals(user.Id);
-                predicate = predicate.And(p1);
 
-                applicationUserDTO.Subscription = this._subscriptionRepository.GetCurrent(predicate);
+
                 return new JsonResult(applicationUserDTO);
             }
             catch (Exception ex)
