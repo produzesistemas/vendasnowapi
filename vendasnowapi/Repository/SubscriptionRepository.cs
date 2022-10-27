@@ -67,7 +67,8 @@ namespace Repositorys
 
         public Subscription GetCurrent(Expression<Func<Subscription, bool>> expression)
         {
-            return _context.Subscription.Include(x => x.Plan).Single(expression);
+            var subs = _context.Subscription.Include(x => x.Plan).Where(expression);
+            return subs.FirstOrDefault();
         }
     }
 }

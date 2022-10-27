@@ -200,7 +200,7 @@ namespace vendasnowapi.Controllers
         {
             try
             {
-                var result = await signInManager.PasswordSignInAsync(loginUser.Email, loginUser.Secret, false, false);
+                var result = await signInManager.PasswordSignInAsync(loginUser.Email.Split("@").FirstOrDefault(), loginUser.Secret, false, false);
                 if (!result.Succeeded)
                 {
                     return BadRequest("Acesso negado! Login inválido ou conta não confirmada!");
@@ -283,60 +283,6 @@ namespace vendasnowapi.Controllers
 
         [HttpPost()]
         [AllowAnonymous]
-        [Route("disable")]
-        public async Task<IActionResult> Disable(LoginUser loginUser)
-        {
-            try
-            {
-                var user = await userManager.FindByEmailAsync(loginUser.Email);
-                if (user == null)
-                {
-                    return BadRequest("Usuário não encontrado.");
-                }
-                user.LockoutEnd = DateTime.Now.AddYears(50);
-                var result = await userManager.UpdateAsync(user);
-                if (!result.Succeeded)
-                {
-                    return BadRequest("Não foi possível bloquear o usuário. Entre em contato com o administrador do sistema.");
-                }
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Falha no login! " + ex.Message);
-            }
-
-        }
-
-        [HttpPost()]
-        [AllowAnonymous]
-        [Route("enable")]
-        public async Task<IActionResult> Enable(LoginUser loginUser)
-        {
-            try
-            {
-                var user = await userManager.FindByEmailAsync(loginUser.Email);
-                if (user == null)
-                {
-                    return BadRequest("Usuário não encontrado.");
-                }
-                user.LockoutEnd = DateTime.Now;
-                var result = await userManager.UpdateAsync(user);
-                if (!result.Succeeded)
-                {
-                    return BadRequest("Não foi possível desbloquear o usuário. Entre em contato com o administrador do sistema.");
-                }
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Falha no login! " + ex.Message);
-            }
-
-        }
-
-        [HttpPost()]
-        [AllowAnonymous]
         [Route("confirm")]
         public async Task<IActionResult> Confirm(LoginUser loginUser)
         {
@@ -361,6 +307,7 @@ namespace vendasnowapi.Controllers
 
                 applicationUser.EmailConfirmed = true;
                 await this.userManager.UpdateAsync(applicationUser);
+
                 this._subscriptionRepository.Insert(new Subscription()
                 {
                     Active = true,
