@@ -114,7 +114,7 @@ namespace vendasnowapi.Controllers
 
                 var user = new ApplicationUser()
                 {
-                    UserName = loginUser.UserName,
+                    UserName = loginUser.UserName.Split("@").FirstOrDefault(),
                     Email = loginUser.Email,
                     EmailConfirmed = false,
                     PhoneNumberConfirmed = false,
@@ -330,31 +330,23 @@ namespace vendasnowapi.Controllers
         [HttpPost()]
         [AllowAnonymous]
         [Route("confirm")]
-        public async Task<IActionResult> Confirm(string code)
+        public async Task<IActionResult> Confirm(LoginUser loginUser)
         {
             try
             {
-                //var applicationUser = await this.userManager.FindByIdAsync(loginUser.ApplicationUserId);
-                //if (applicationUser == null)
-                //{
-                //    return BadRequest("Usuário não encontrado.");
-                //}
-
-                var userId = User.FindFirstValue(code);
-                if (userId == null)
-                {
-                    return BadRequest("Código não encontrado.");
-                }
-                var applicationUser = await this.userManager.FindByIdAsync(userId);
+                var applicationUser = await this.userManager.FindByIdAsync(loginUser.ApplicationUserId);
                 if (applicationUser == null)
                 {
                     return BadRequest("Usuário não encontrado.");
                 }
 
-                //var claims = await this.userManager.GetClaimsAsync(applicationUser);
+                var claims = await this.userManager.GetClaimsAsync(applicationUser);
+                if (!claims.Any(c => c.Value == loginUser.Code))
+                {
+                    return BadRequest("Código não encontrado.");
+                }
 
-
-                if (applicationUser.EmailConfirmed)
+                if ((claims.Any(c => c.Value == loginUser.Code)) && (applicationUser.EmailConfirmed))
                 {
                     return BadRequest("Email já confirmado. Efetue o login");
                 }
@@ -363,11 +355,11 @@ namespace vendasnowapi.Controllers
                 await this.userManager.UpdateAsync(applicationUser);
                 this._subscriptionRepository.Insert(new Subscription()
                 {
-                     Active = true,
-                      AspNetUsersId = applicationUser.Id,
-                       PlanId = 1,
-                        SubscriptionDate = DateTime.Now,
-                         Value = 0
+                    Active = true,
+                    AspNetUsersId = applicationUser.Id,
+                    PlanId = 1,
+                    SubscriptionDate = DateTime.Now,
+                    Value = 0
                 });
                 return Ok();
 
@@ -475,7 +467,7 @@ namespace vendasnowapi.Controllers
 
                 var user = new ApplicationUser()
                 {
-                    UserName = loginUser.UserName,
+                    UserName = loginUser.UserName.Split("@").FirstOrDefault(),
                     Email = loginUser.Email,
                     EmailConfirmed = false,
                     PhoneNumberConfirmed = false,
