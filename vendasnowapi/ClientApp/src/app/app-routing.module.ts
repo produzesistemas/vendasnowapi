@@ -16,7 +16,7 @@ const routes: Routes = [
       { path: 'index', loadChildren: () => DefaultModule },
       { path: 'quem-somos', loadChildren: () => QuemSomosModule },
       { path: 'privacidade/vendasnow', loadChildren: () => PoliticaPrivacidadeModule },
-      { path: 'user', loadChildren: () => UserModule },
+      { path: 'user/confirm', loadChildren: () => UserModule },
     ]
   },
   {

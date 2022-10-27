@@ -15,7 +15,7 @@ export class AuthenticationService extends GenericHttpService<any>{
             }
 
             confirmUser(user) {
-                return this.postAll('account/confirmVendasNow', user);
+                return this.postAll('account/confirm', user);
             }
         
 

@@ -75,8 +75,9 @@ namespace vendasnowapi.Controllers
                 } else
                 {
                     if (result.Errors.FirstOrDefault().Code.Equals("PasswordTooShort")) { return BadRequest("A senha deve ter no mínimo 6 caracteres"); }
-                    if (result.Errors.FirstOrDefault().Code.Equals("InvalidUserName") || result.Errors.FirstOrDefault().Code.Equals("InvalidEmail")) { return BadRequest("E-mail inválido!"); }
-                    return BadRequest("Não foi possível recuperar a senha.");
+                    if (result.Errors.FirstOrDefault().Code.Equals("InvalidEmail")) { return BadRequest("E-mail inválido!"); }
+                    if (result.Errors.FirstOrDefault().Code.Equals("InvalidUserName")) { return BadRequest("Nome do usuário inválido. Use apenas letras e números."); }
+                    return BadRequest(result.Errors.FirstOrDefault().ToString());
                 }
 
                 return new JsonResult("Senha recuperada com sucesso! Verifique sua caixa de email e confirme o cadastro.");
@@ -90,8 +91,8 @@ namespace vendasnowapi.Controllers
 
         [HttpPost()]
         [AllowAnonymous]
-        [Route("registerVendasNow")]
-        public async Task<IActionResult> RegisterVendasNow(LoginUser loginUser)
+        [Route("register")]
+        public async Task<IActionResult> Register(LoginUser loginUser)
         {
             try
             {
@@ -114,7 +115,7 @@ namespace vendasnowapi.Controllers
 
                 var user = new ApplicationUser()
                 {
-                    UserName = loginUser.UserName.Split("@").FirstOrDefault(),
+                    UserName = loginUser.Email.Split("@").FirstOrDefault(),
                     Email = loginUser.Email,
                     EmailConfirmed = false,
                     PhoneNumberConfirmed = false,
@@ -127,7 +128,7 @@ namespace vendasnowapi.Controllers
 
                 if (addUserResult.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user, "VendasNow");
+                    await userManager.AddToRoleAsync(user, loginUser.AppName);
                     var code = Guid.NewGuid().ToString();
                     await userManager.AddClaimAsync(user, new Claim("CodeConfirmation", code));
                     sendEmailConfirmUser(loginUser.Email, code, user.Id, loginUser.AppName);
@@ -154,15 +155,22 @@ namespace vendasnowapi.Controllers
         {
             try
             {
-
                 MailMessage mail = new MailMessage();
                 mail.From = new MailAddress(configuration["FromEmail"].ToString());
                 mail.To.Add(Email);
                 mail.Subject = string.Concat("O aplicativo ", appName, " precisa validar seu email.");
-                mail.Body = "<div style='padding-top: 15px;padding-bottom: 15px;'><img src='" + string.Concat(configuration["Dominio"].ToString(), "/assets/logo_arredondado_app.png") + "' width='100'></div>" +
-                    "<div style='padding-top: 15px;'>Clique no link abaixo para validar seu email no aplicativo.</div>" +
-                    "<div><a href=" + configuration["Dominio"].ToString() + "/account/confirm/" + userId + "/" + code + ">Clique para validar</a>" +
-                "<div></div>";
+                switch(appName)
+                {
+                    case "VendasNow":
+                        mail.Body = "<div style='padding-top: 15px;padding-bottom: 15px;'><img src='" + string.Concat(configuration["Dominio"].ToString(), "/assets/logo_arredondado_app.png") + "' width='100'></div>" +
+                        "<div style='padding-top: 15px;'>Clique no link abaixo para validar seu email no aplicativo.</div>" +
+                        "<div><a href=" + configuration["Dominio"].ToString() + "/user/confirm/" + userId + "/" + code + ">Clique para validar</a>" +
+                        "<div></div>";
+                        break;
+                    default:
+                        Console.WriteLine("Default case");
+                    break;
+                }
                 mail.IsBodyHtml = true;
                 SmtpClient smtp = new SmtpClient(configuration["STMPEmail"].ToString(), Convert.ToInt32(configuration["PortEmail"].ToString()));
                 smtp.Credentials = new System.Net.NetworkCredential(configuration["UserEmail"].ToString(), configuration["PassEmail"].ToString());
@@ -437,68 +445,6 @@ namespace vendasnowapi.Controllers
                     return BadRequest("Acesso negado! Usuário sem inscrição!");
                 };
                 return BadRequest("Falha no login! " + ex.Message);
-            }
-
-        }
-
-        [HttpPost()]
-        [AllowAnonymous]
-        [Route("registerPpague")]
-        public async Task<IActionResult> RegisterPpague(LoginUser loginUser)
-        {
-            try
-            {
-                var applicationUser = this.userManager.FindByEmailAsync(loginUser.Email);
-                if (applicationUser.Result != null)
-                {
-                    if (applicationUser.Result.EmailConfirmed)
-                    {
-                        return BadRequest("Usuário já registrado e confirmado!");
-                    }
-                    else
-                    {
-                        var code = Guid.NewGuid().ToString();
-                        await userManager.AddClaimAsync(applicationUser.Result, new Claim("CodeConfirmation", code));
-                        sendEmailConfirmUser(applicationUser.Result.Email, code, applicationUser.Result.Id, loginUser.AppName);
-                        return BadRequest("Usuário já registrado. Verifique sua caixa de email e confirme o cadastro.");
-                    }
-
-                }
-
-                var user = new ApplicationUser()
-                {
-                    UserName = loginUser.UserName.Split("@").FirstOrDefault(),
-                    Email = loginUser.Email,
-                    EmailConfirmed = false,
-                    PhoneNumberConfirmed = false,
-                    TwoFactorEnabled = false,
-                    LockoutEnabled = true,
-                    AccessFailedCount = Convert.ToInt32(decimal.Zero)
-                };
-
-                IdentityResult addUserResult = await userManager.CreateAsync(user, loginUser.Secret);
-
-                if (addUserResult.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(user, "Ppague");
-                    var code = Guid.NewGuid().ToString();
-                    await userManager.AddClaimAsync(user, new Claim("CodeConfirmation", code));
-                    sendEmailConfirmUser(loginUser.Email, code, user.Id, loginUser.AppName);
-                }
-                else
-                {
-                    if (addUserResult.Errors.FirstOrDefault().Code.Equals("PasswordTooShort")) { return BadRequest("A senha deve ter no mínimo 6 caracteres"); }
-                    if (addUserResult.Errors.FirstOrDefault().Code.Equals("InvalidEmail")) { return BadRequest("E-mail inválido!"); }
-                    if (addUserResult.Errors.FirstOrDefault().Code.Equals("InvalidUserName")) { return BadRequest("Nome do usuário inválido. Use apenas letras e números."); }
-                    return BadRequest(addUserResult.Errors.FirstOrDefault().ToString());
-                }
-
-                return new JsonResult("Usuário registrado com sucesso! Verifique sua caixa de email e confirme o cadastro.");
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.InnerException);
             }
 
         }
