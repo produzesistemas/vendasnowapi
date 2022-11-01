@@ -11,6 +11,5 @@ namespace UnitOfWork
         void Delete(int id);
         void Update(Product entity);
         void Insert(Product entity);
-        IQueryable<Product> GetPagination(Expression<Func<Product, bool>> expression, int sizePage);
     }
 }

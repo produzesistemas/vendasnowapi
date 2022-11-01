@@ -65,20 +65,42 @@ namespace vendasnowapi.Controllers
                     if (valid.Errors.FirstOrDefault().Code.Equals("PasswordTooShort")) { return BadRequest("A senha deve ter no mínimo 6 caracteres"); }
                     return BadRequest("Não foi possível recuperar a senha.");
                 }
-                user.EmailConfirmed = false;
-                var result = await userManager.UpdateAsync(user);
-                if (result.Succeeded)
+
+                if (user.EmailConfirmed)
                 {
-                    var code = Guid.NewGuid().ToString();
-                    await userManager.AddClaimAsync(user, new Claim("CodeConfirmation", code));
-                    sendEmailConfirmUser(loginUser.Email, code, user.Id, loginUser.AppName);
+                    user.EmailConfirmed = false;
+                    var result = await userManager.UpdateAsync(user);
+                    if (result.Succeeded)
+                    {
+                        var code = Guid.NewGuid().ToString();
+                        await userManager.AddClaimAsync(user, new Claim("CodeConfirmation", code));
+                        sendEmailConfirmUserForgot(loginUser.Email, code, user.Id, loginUser.AppName);
+                    }
+                    else
+                    {
+                        if (result.Errors.FirstOrDefault().Code.Equals("PasswordTooShort")) { return BadRequest("A senha deve ter no mínimo 6 caracteres"); }
+                        if (result.Errors.FirstOrDefault().Code.Equals("InvalidEmail")) { return BadRequest("E-mail inválido!"); }
+                        if (result.Errors.FirstOrDefault().Code.Equals("InvalidUserName")) { return BadRequest("Nome do usuário inválido. Use apenas letras e números."); }
+                        return BadRequest(result.Errors.FirstOrDefault().ToString());
+                    }
                 } else
                 {
-                    if (result.Errors.FirstOrDefault().Code.Equals("PasswordTooShort")) { return BadRequest("A senha deve ter no mínimo 6 caracteres"); }
-                    if (result.Errors.FirstOrDefault().Code.Equals("InvalidEmail")) { return BadRequest("E-mail inválido!"); }
-                    if (result.Errors.FirstOrDefault().Code.Equals("InvalidUserName")) { return BadRequest("Nome do usuário inválido. Use apenas letras e números."); }
-                    return BadRequest(result.Errors.FirstOrDefault().ToString());
+                    var result = await userManager.UpdateAsync(user);
+                    if (result.Succeeded)
+                    {
+                        var code = Guid.NewGuid().ToString();
+                        await userManager.AddClaimAsync(user, new Claim("CodeConfirmation", code));
+                        sendEmailConfirmUser(loginUser.Email, code, user.Id, loginUser.AppName);
+                    }
+                    else
+                    {
+                        if (result.Errors.FirstOrDefault().Code.Equals("PasswordTooShort")) { return BadRequest("A senha deve ter no mínimo 6 caracteres"); }
+                        if (result.Errors.FirstOrDefault().Code.Equals("InvalidEmail")) { return BadRequest("E-mail inválido!"); }
+                        if (result.Errors.FirstOrDefault().Code.Equals("InvalidUserName")) { return BadRequest("Nome do usuário inválido. Use apenas letras e números."); }
+                        return BadRequest(result.Errors.FirstOrDefault().ToString());
+                    }
                 }
+                
 
                 return new JsonResult("Senha recuperada com sucesso! Verifique sua caixa de email e confirme o cadastro.");
             }
@@ -99,18 +121,7 @@ namespace vendasnowapi.Controllers
                 var applicationUser = this.userManager.FindByEmailAsync(loginUser.Email);
                 if (applicationUser.Result != null)
                 {
-                    if (applicationUser.Result.EmailConfirmed)
-                    {
-                        return BadRequest("Usuário já registrado e confirmado!");
-                    }
-                    else
-                    {
-                        var code = Guid.NewGuid().ToString();
-                        await userManager.AddClaimAsync(applicationUser.Result, new Claim("CodeConfirmation", code));
-                        sendEmailConfirmUser(applicationUser.Result.Email, code, applicationUser.Result.Id, loginUser.AppName);
-                        return BadRequest("Usuário já registrado. Verifique sua caixa de email e confirme o cadastro.");
-                    }
-
+                        return BadRequest("Usuário já registrado. Verifique sua caixa de email e confirme o cadastro ou recupere sua senha.");
                 }
 
                 var user = new ApplicationUser()
@@ -193,6 +204,48 @@ namespace vendasnowapi.Controllers
             }
         }
 
+        public void sendEmailConfirmUserForgot(string Email, string code, string userId, string appName)
+        {
+            try
+            {
+                MailMessage mail = new MailMessage();
+                mail.From = new MailAddress(configuration["FromEmail"].ToString());
+                mail.To.Add(Email);
+                mail.Subject = string.Concat("O aplicativo ", appName, " precisa validar seu email.");
+                switch (appName)
+                {
+                    case "VendasNow":
+                        mail.Body = "<div style='padding-top: 15px;padding-bottom: 15px;'><img src='" + string.Concat(configuration["Dominio"].ToString(), "/assets/logo_arredondado_app.png") + "' width='100'></div>" +
+                        "<div style='padding-top: 15px;'>Clique no link abaixo para validar seu email no aplicativo.</div>" +
+                        "<div><a href=" + configuration["Dominio"].ToString() + "/user/confirmForgot/" + userId + "/" + code + ">Clique para validar</a>" +
+                        "<div></div>";
+                        break;
+                    default:
+                        Console.WriteLine("Default case");
+                        break;
+                }
+                mail.IsBodyHtml = true;
+                SmtpClient smtp = new SmtpClient(configuration["STMPEmail"].ToString(), Convert.ToInt32(configuration["PortEmail"].ToString()));
+                smtp.Credentials = new System.Net.NetworkCredential(configuration["UserEmail"].ToString(), configuration["PassEmail"].ToString());
+                smtp.Send(mail);
+
+            }
+            catch (SmtpFailedRecipientException ex)
+            {
+                var message = ex.Message;
+
+
+            }
+            catch (SmtpException ex)
+            {
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         [HttpPost()]
         [AllowAnonymous]
         [Route("loginVendasNow")]
@@ -211,43 +264,33 @@ namespace vendasnowapi.Controllers
                     return BadRequest("Acesso negado! Confirme sua conta pelo email!");
                 }
 
-                Expression<Func<Subscription, bool>> p1, p2;
-                var predicate = PredicateBuilder.New<Subscription>();
-                p1 = p => p.AspNetUsersId.Equals(user.Id);
-                predicate = predicate.And(p1);
-                p2 = p => p.Active == true;
-                predicate = predicate.And(p2);
-
-                var subscription = this._subscriptionRepository.GetCurrent(predicate);
-                if (subscription == null)
-                {
-                    return StatusCode(600);
-                } else
-                {
-                    if (subscription.SubscriptionDate.AddDays(subscription.Plan.Days).Date < DateTime.Now.Date)
-                    {
-                        return StatusCode(600);
-                    }
-                }
-
-
                 var claimsPrincipal = await signInManager.CreateUserPrincipalAsync(user);
                 var claims = claimsPrincipal.Claims.ToList();
                 var permission = claims.Where(c => c.Type.Contains("role")).Select(c => c.Value).FirstOrDefault();
                 if (!permission.Equals("VendasNow"))
                 {
-                    return BadRequest("Acesso negado! Usuário não é usuário do VendasNow Pro!");
+                    return BadRequest("Acesso negado! Usuário não tem conta no VendasNow Pro!");
                 }
+
+                Expression<Func<Subscription, bool>> ps1, ps2;
+                var pred = PredicateBuilder.New<Subscription>();
+                ps1 = p => p.AspNetUsersId.Equals(user.Id);
+                pred = pred.And(ps1);
+                ps2 = p => p.Active == true;
+                pred = pred.And(ps2);
+                var subscription = _subscriptionRepository.GetCurrent(pred);
+                if (subscription == null)
+                {
+                    return BadRequest("Acesso negado! Login inválido ou conta não confirmada!");
+                }
+                
                 var applicationUser = new ApplicationUser();
                 applicationUser.Id = user.Id;
                 var applicationUserDTO = new ApplicationUserDTO();
-                applicationUserDTO.Token = TokenService.GenerateToken(applicationUser, configuration, permission);
+                applicationUserDTO.Token = TokenService.GenerateToken(applicationUser, configuration, permission, subscription.SubscriptionDate.AddDays(subscription.Plan.Days).Date);
                 applicationUserDTO.Email = user.Email;
                 applicationUserDTO.UserName = user.UserName;
                 applicationUserDTO.Role = permission;
-
-
-
                 return new JsonResult(applicationUserDTO);
             }
             catch (Exception ex)
@@ -308,7 +351,7 @@ namespace vendasnowapi.Controllers
                 applicationUser.EmailConfirmed = true;
                 await this.userManager.UpdateAsync(applicationUser);
 
-                this._subscriptionRepository.Insert(new Subscription()
+                _subscriptionRepository.Insert(new Subscription()
                 {
                     Active = true,
                     AspNetUsersId = applicationUser.Id,
@@ -318,6 +361,41 @@ namespace vendasnowapi.Controllers
                 });
                 return Ok();
 
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(string.Concat("Falha na validação do usuário", ex.Message));
+            }
+
+        }
+
+        [HttpPost()]
+        [AllowAnonymous]
+        [Route("confirmForgot")]
+        public async Task<IActionResult> ConfirmForgot(LoginUser loginUser)
+        {
+            try
+            {
+                var applicationUser = await this.userManager.FindByIdAsync(loginUser.ApplicationUserId);
+                if (applicationUser == null)
+                {
+                    return BadRequest("Usuário não encontrado.");
+                }
+
+                var claims = await this.userManager.GetClaimsAsync(applicationUser);
+                if (!claims.Any(c => c.Value == loginUser.Code))
+                {
+                    return BadRequest("Código não encontrado.");
+                }
+
+                if ((claims.Any(c => c.Value == loginUser.Code)) && (applicationUser.EmailConfirmed))
+                {
+                    return BadRequest("Email já confirmado. Efetue o login");
+                }
+
+                applicationUser.EmailConfirmed = true;
+                await this.userManager.UpdateAsync(applicationUser);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -345,27 +423,6 @@ namespace vendasnowapi.Controllers
                     return BadRequest("Acesso negado! Confirme sua conta pelo email!");
                 }
 
-                Expression<Func<Subscription, bool>> p1, p2;
-                var predicate = PredicateBuilder.New<Subscription>();
-                p1 = p => p.AspNetUsersId.Equals(user.Id);
-                predicate = predicate.And(p1);
-                p2 = p => p.Active == true;
-                predicate = predicate.And(p2);
-
-                var subscription = this._subscriptionRepository.GetCurrent(predicate);
-                if (subscription == null)
-                {
-                    return StatusCode(600);
-                }
-                else
-                {
-                    if (subscription.SubscriptionDate.AddDays(subscription.Plan.Days).Date < DateTime.Now.Date)
-                    {
-                        return StatusCode(600);
-                    }
-                }
-
-
                 var claimsPrincipal = await signInManager.CreateUserPrincipalAsync(user);
                 var claims = claimsPrincipal.Claims.ToList();
                 var permission = claims.Where(c => c.Type.Contains("role")).Select(c => c.Value).FirstOrDefault();
@@ -373,15 +430,26 @@ namespace vendasnowapi.Controllers
                 {
                     return BadRequest("Acesso negado! Usuário não é usuário do Ppague!");
                 }
+
+                Expression<Func<Subscription, bool>> ps1, ps2;
+                var pred = PredicateBuilder.New<Subscription>();
+                ps1 = p => p.AspNetUsersId.Equals(user.Id);
+                pred = pred.And(ps1);
+                ps2 = p => p.Active == true;
+                pred = pred.And(ps2);
+                var subscription = _subscriptionRepository.GetCurrent(pred);
+                if (subscription == null)
+                {
+                    return BadRequest("Acesso negado! Login inválido ou conta não confirmada!");
+                }
+
                 var applicationUser = new ApplicationUser();
                 applicationUser.Id = user.Id;
                 var applicationUserDTO = new ApplicationUserDTO();
-                applicationUserDTO.Token = TokenService.GenerateToken(applicationUser, configuration, permission);
+                applicationUserDTO.Token = TokenService.GenerateToken(applicationUser, configuration, permission, subscription.SubscriptionDate);
                 applicationUserDTO.Email = user.Email;
                 applicationUserDTO.UserName = user.UserName;
                 applicationUserDTO.Role = permission;
-
-
 
                 return new JsonResult(applicationUserDTO);
             }

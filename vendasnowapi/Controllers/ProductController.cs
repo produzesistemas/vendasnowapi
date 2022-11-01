@@ -1,9 +1,7 @@
 ﻿using LinqKit;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using Models.Filters;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -16,40 +14,17 @@ namespace vendasnowapi.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private IProductRepository ProductRepository;
+        private IProductRepository _productRepository;
+        private ISubscriptionRepository _subscriptionRepository;
         public ProductController(
-   IProductRepository ProductRepository
+   IProductRepository ProductRepository, ISubscriptionRepository subscriptionRepository
 
     )
         {
-            this.ProductRepository = ProductRepository;
+            _productRepository = ProductRepository;
+            _subscriptionRepository = subscriptionRepository;
         }
 
-
-        [HttpPost()]
-        [Route("getPagination")]
-        [Authorize()]
-        public IActionResult GetPagination(FilterDefault filter)
-        {
-            try
-            {
-                ClaimsPrincipal currentUser = this.User;
-                var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
-                if (id == null)
-                {
-                    return BadRequest("Identificação do usuário não encontrada.");
-                }
-                Expression<Func<Product, bool>> p1;
-                var predicate = PredicateBuilder.New<Product>();
-                p1 = p => p.AspNetUsersId.Equals(id);
-                predicate = predicate.And(p1);
-                return new JsonResult(ProductRepository.GetPagination(predicate, filter.SizePage).ToList());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(string.Concat("Falha no carregamento dos Clientes: ", ex.Message));
-            }
-        }
 
         [HttpGet()]
         [Route("getAll")]
@@ -60,16 +35,46 @@ namespace vendasnowapi.Controllers
             {
                 ClaimsPrincipal currentUser = this.User;
                 var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
+                var subscriptionExpire = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("userdata")).Value;
                 if (id == null)
                 {
                     return BadRequest("Identificação do usuário não encontrada.");
+                }
+                if (subscriptionExpire == null)
+                {
+                    return BadRequest("Usuário sem assinatura.");
+                }
+
+                var expireDate = Convert.ToDateTime(subscriptionExpire);
+                if (expireDate.Date < DateTime.Now.Date)
+                {
+                    return StatusCode(600);
+                }
+
+                Expression<Func<Subscription, bool>> ps1, ps2;
+                var pred = PredicateBuilder.New<Subscription>();
+                ps1 = p => p.AspNetUsersId.Equals(id);
+                pred = pred.And(ps1);
+                ps2 = p => p.Active == true;
+                pred = pred.And(ps2);
+                var subscription = _subscriptionRepository.GetCurrent(pred);
+                if (subscription == null)
+                {
+                    return StatusCode(600);
+                }
+                else
+                {
+                    if (subscription.SubscriptionDate.AddDays(subscription.Plan.Days).Date < DateTime.Now.Date)
+                    {
+                        return StatusCode(600);
+                    }
                 }
 
                 Expression<Func<Product, bool>> p1;
                 var predicate = PredicateBuilder.New<Product>();
                 p1 = p => p.AspNetUsersId.Equals(id);
                 predicate = predicate.And(p1);
-                return new JsonResult(ProductRepository.Where(predicate).ToList());
+                return new JsonResult(_productRepository.Where(predicate).ToList());
             }
             catch (Exception ex)
             {
@@ -93,12 +98,12 @@ namespace vendasnowapi.Controllers
 
                 if (product.Id > decimal.Zero)
                 {
-                    ProductRepository.Update(product);
+                    _productRepository.Update(product);
                 }
                 else
                 {
                     product.AspNetUsersId = id;
-                    ProductRepository.Insert(product);
+                    _productRepository.Insert(product);
                 }
                 return new OkResult();
             }
@@ -115,7 +120,7 @@ namespace vendasnowapi.Controllers
         {
             try
             {
-                ProductRepository.Delete(product.Id);
+                _productRepository.Delete(product.Id);
                 return new OkResult();
             }
             catch (Exception ex)

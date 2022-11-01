@@ -1,9 +1,7 @@
 ﻿using LinqKit;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using Models.Filters;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -16,38 +14,15 @@ namespace vendasnowapi.Controllers
     [ApiController]
     public class ClientController : ControllerBase
     {
-        private IClientRepository ClientRepository;
+        private IClientRepository _clientRepository;
+        private ISubscriptionRepository _subscriptionRepository;
         public ClientController(
-   IClientRepository ClientRepository
+   IClientRepository ClientRepository, ISubscriptionRepository subscriptionRepository
 
     )
         {
-            this.ClientRepository = ClientRepository;
-        }
-
-        [HttpPost()]
-        [Route("getPagination")]
-        [Authorize()]
-        public IActionResult GetPagination(FilterDefault filter)
-        {
-            try
-            {
-                ClaimsPrincipal currentUser = this.User;
-                var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
-                if (id == null)
-                {
-                    return BadRequest("Identificação do usuário não encontrada.");
-                }
-                Expression<Func<Client, bool>> p1;
-                var predicate = PredicateBuilder.New<Client>();
-                p1 = p => p.AspNetUsersId.Equals(id);
-                predicate = predicate.And(p1);
-                return new JsonResult(ClientRepository.GetPagination(predicate, filter.SizePage).ToList());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(string.Concat("Falha no carregamento dos Clientes: ", ex.Message));
-            }
+            _clientRepository = ClientRepository;
+            _subscriptionRepository = subscriptionRepository;
         }
 
         [HttpGet()]
@@ -59,16 +34,27 @@ namespace vendasnowapi.Controllers
             {
                 ClaimsPrincipal currentUser = this.User;
                 var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
+                var subscriptionExpire = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("userdata")).Value;
                 if (id == null)
                 {
                     return BadRequest("Identificação do usuário não encontrada.");
+                }
+                if (subscriptionExpire == null)
+                {
+                    return BadRequest("Usuário sem assinatura.");
+                }
+
+                var expireDate = Convert.ToDateTime(subscriptionExpire);
+                if (expireDate.Date < DateTime.Now.Date)
+                {
+                    return StatusCode(600);
                 }
 
                 Expression<Func<Client, bool>> p1;
                 var predicate = PredicateBuilder.New<Client>();
                 p1 = p => p.AspNetUsersId.Equals(id);
                 predicate = predicate.And(p1);
-                return new JsonResult(ClientRepository.Where(predicate).ToList());
+                return new JsonResult(_clientRepository.Where(predicate).ToList());
             }
             catch (Exception ex)
             {
@@ -92,12 +78,12 @@ namespace vendasnowapi.Controllers
 
                 if (client.Id > decimal.Zero)
                 {
-                    ClientRepository.Update(client);
+                    _clientRepository.Update(client);
                 }
                 else
                 {
                     client.AspNetUsersId = id;
-                    ClientRepository.Insert(client);
+                    _clientRepository.Insert(client);
                 }
                 return new OkResult();
             }
@@ -114,7 +100,7 @@ namespace vendasnowapi.Controllers
         {
             try
             {
-                ClientRepository.Delete(client.Id);
+                _clientRepository.Delete(client.Id);
                 return new OkResult();
             }
             catch (Exception ex)

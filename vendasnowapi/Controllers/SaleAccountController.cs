@@ -15,13 +15,15 @@ namespace vendasnowapi.Controllers
     [ApiController]
     public class SaleAccountController : ControllerBase
     {
-        private IAccountRepository AccountRepository;
+        private IAccountRepository _accountRepository;
+        private ISubscriptionRepository _subscriptionRepository;
         public SaleAccountController(
-   IAccountRepository AccountRepository
+   IAccountRepository AccountRepository, ISubscriptionRepository subscriptionRepository
 
     )
         {
-            this.AccountRepository = AccountRepository;
+            _accountRepository = AccountRepository;
+            _subscriptionRepository = subscriptionRepository;
         }
 
 
@@ -34,10 +36,41 @@ namespace vendasnowapi.Controllers
             {
                 ClaimsPrincipal currentUser = this.User;
                 var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
+                var subscriptionExpire = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("userdata")).Value;
                 if (id == null)
                 {
                     return BadRequest("Identificação do usuário não encontrada.");
                 }
+                if (subscriptionExpire == null)
+                {
+                    return BadRequest("Usuário sem assinatura.");
+                }
+
+                var expireDate = Convert.ToDateTime(subscriptionExpire);
+                if (expireDate.Date < DateTime.Now.Date)
+                {
+                    return StatusCode(600);
+                }
+
+                Expression<Func<Subscription, bool>> ps1, ps2;
+                var pred = PredicateBuilder.New<Subscription>();
+                ps1 = p => p.AspNetUsersId.Equals(id);
+                pred = pred.And(ps1);
+                ps2 = p => p.Active == true;
+                pred = pred.And(ps2);
+                var subscription = _subscriptionRepository.GetCurrent(pred);
+                if (subscription == null)
+                {
+                    return StatusCode(600);
+                }
+                else
+                {
+                    if (subscription.SubscriptionDate.AddDays(subscription.Plan.Days).Date < DateTime.Now.Date)
+                    {
+                        return StatusCode(600);
+                    }
+                }
+
                 Expression<Func<Account, bool>> p1, p2, p3, p4;
                 var predicate = PredicateBuilder.New<Account>();
                 p1 = p => p.Sale.AspNetUsersId.Equals(id);
@@ -53,7 +86,7 @@ namespace vendasnowapi.Controllers
                     predicate = predicate.And(p4);
                 }
 
-                return new JsonResult(AccountRepository.Where(predicate).ToList());
+                return new JsonResult(_accountRepository.Where(predicate).ToList());
             }
             catch (Exception ex)
             {
@@ -76,7 +109,7 @@ namespace vendasnowapi.Controllers
                     return BadRequest("Identificação do usuário não encontrada.");
                 }
                 account.DateOfPayment = DateTime.Now;
-                AccountRepository.Update(account);
+                _accountRepository.Update(account);
                 return new OkResult();
             }
             catch (Exception ex)
@@ -96,7 +129,7 @@ namespace vendasnowapi.Controllers
                 {
                     return BadRequest("Para acessar a conta é necessário fazer login no aplicativo!");
                 }
-                return new JsonResult(AccountRepository.Get(id));
+                return new JsonResult(_accountRepository.Get(id));
             }
             catch (Exception ex)
             {
@@ -125,7 +158,7 @@ namespace vendasnowapi.Controllers
                 predicate = predicate.And(p2);
                 p3 = p => p.Status == 1;
                 predicate = predicate.And(p3);
-                return new JsonResult(AccountRepository.Where(predicate).ToList());
+                return new JsonResult(_accountRepository.Where(predicate).ToList());
             }
             catch (Exception ex)
             {

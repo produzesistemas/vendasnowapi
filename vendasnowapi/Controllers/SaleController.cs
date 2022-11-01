@@ -15,36 +15,12 @@ namespace vendasnowapi.Controllers
     [ApiController]
     public class SaleController : ControllerBase
     {
-        private ISaleRepository SaleRepository;
-        public SaleController(ISaleRepository SaleRepository)
+        private ISaleRepository _saleRepository;
+        private ISubscriptionRepository _subscriptionRepository;
+        public SaleController(ISaleRepository SaleRepository, ISubscriptionRepository subscriptionRepository)
         {
-            this.SaleRepository = SaleRepository;
-        }
-
-
-        [HttpPost()]
-        [Route("getPagination")]
-        [Authorize()]
-        public IActionResult GetPagination(FilterDefault filter)
-        {
-            try
-            {
-                ClaimsPrincipal currentUser = this.User;
-                var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
-                if (id == null)
-                {
-                    return BadRequest("Identificação do usuário não encontrada.");
-                }
-                Expression<Func<Sale, bool>> p1;
-                var predicate = PredicateBuilder.New<Sale>();
-                p1 = p => p.AspNetUsersId.Equals(id);
-                predicate = predicate.And(p1);
-                return new JsonResult(SaleRepository.GetPagination(predicate, filter.SizePage).ToList());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(string.Concat("Falha no carregamento das vendas: ", ex.Message));
-            }
+            _saleRepository = SaleRepository;
+            _subscriptionRepository = subscriptionRepository;
         }
 
         [HttpPost()]
@@ -56,10 +32,42 @@ namespace vendasnowapi.Controllers
             {
                 ClaimsPrincipal currentUser = this.User;
                 var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
+                var subscriptionExpire = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("userdata")).Value;
                 if (id == null)
                 {
                     return BadRequest("Identificação do usuário não encontrada.");
                 }
+                if (subscriptionExpire == null)
+                {
+                    return BadRequest("Usuário sem assinatura.");
+                }
+
+                var expireDate = Convert.ToDateTime(subscriptionExpire);
+                if (expireDate.Date < DateTime.Now.Date)
+                {
+                    return StatusCode(600);
+                }
+
+
+                Expression<Func<Subscription, bool>> ps1, ps2;
+                var pred = PredicateBuilder.New<Subscription>();
+                ps1 = p => p.AspNetUsersId.Equals(id);
+                pred = pred.And(ps1);
+                ps2 = p => p.Active == true;
+                pred = pred.And(ps2);
+                var subscription = _subscriptionRepository.GetCurrent(pred);
+                if (subscription == null)
+                {
+                    return StatusCode(600);
+                }
+                else
+                {
+                    if (subscription.SubscriptionDate.AddDays(subscription.Plan.Days).Date < DateTime.Now.Date)
+                    {
+                        return StatusCode(600);
+                    }
+                }
+
                 Expression<Func<Sale, bool>> p1, p2, p3;
                 var predicate = PredicateBuilder.New<Sale>();
                 p1 = p => p.AspNetUsersId.Equals(id);
@@ -75,7 +83,7 @@ namespace vendasnowapi.Controllers
                     p3 = p => p.SaleDate.Year == filter.Year;
                     predicate = predicate.And(p3);
                 }
-                return new JsonResult(SaleRepository.Where(predicate).ToList());
+                return new JsonResult(_saleRepository.Where(predicate).ToList());
             }
             catch (Exception ex)
             {
@@ -92,16 +100,47 @@ namespace vendasnowapi.Controllers
             {
                 ClaimsPrincipal currentUser = this.User;
                 var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
+                var subscriptionExpire = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("userdata")).Value;
                 if (id == null)
                 {
                     return BadRequest("Identificação do usuário não encontrada.");
+                }
+                if (subscriptionExpire == null)
+                {
+                    return BadRequest("Usuário sem assinatura.");
+                }
+
+                var expireDate = Convert.ToDateTime(subscriptionExpire);
+                if (expireDate.Date < DateTime.Now.Date)
+                {
+                    return StatusCode(600);
+                }
+
+
+                Expression<Func<Subscription, bool>> ps1, ps2;
+                var pred = PredicateBuilder.New<Subscription>();
+                ps1 = p => p.AspNetUsersId.Equals(id);
+                pred = pred.And(ps1);
+                ps2 = p => p.Active == true;
+                pred = pred.And(ps2);
+                var subscription = _subscriptionRepository.GetCurrent(pred);
+                if (subscription == null)
+                {
+                    return StatusCode(600);
+                }
+                else
+                {
+                    if (subscription.SubscriptionDate.AddDays(subscription.Plan.Days).Date < DateTime.Now.Date)
+                    {
+                        return StatusCode(600);
+                    }
                 }
 
                 Expression<Func<Sale, bool>> p1;
                 var predicate = PredicateBuilder.New<Sale>();
                 p1 = p => p.AspNetUsersId.Equals(id);
                 predicate = predicate.And(p1);
-                return new JsonResult(SaleRepository.Where(predicate).ToList());
+                return new JsonResult(_saleRepository.Where(predicate).ToList());
             }
             catch (Exception ex)
             {
@@ -124,7 +163,7 @@ namespace vendasnowapi.Controllers
                 }
                 sale.AspNetUsersId = id;
                 sale.CreateDate = DateTime.Now;
-                SaleRepository.Insert(sale);
+                _saleRepository.Insert(sale);
                 return new OkResult();
             }
             catch (Exception ex)
@@ -140,12 +179,12 @@ namespace vendasnowapi.Controllers
         {
             try
             {
-                SaleRepository.Delete(sale.Id);
+                _saleRepository.Delete(sale.Id);
                 return new OkResult();
             }
             catch (Exception ex)
             {
-                return BadRequest(string.Concat("Falha na exclusão do produto: ", ex.Message));
+                return BadRequest(string.Concat("Falha na exclusão da venda: ", ex.Message));
 
             }
         }

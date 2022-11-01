@@ -67,9 +67,5 @@ namespace Repositorys
             GC.SuppressFinalize(this);
         }
 
-        public IQueryable<Product> GetPagination(Expression<Func<Product, bool>> expression, int sizePage)
-        {
-            return _context.Product.Where(expression).Take(sizePage);
-        }
     }
 }

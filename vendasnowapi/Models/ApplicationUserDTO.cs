@@ -8,7 +8,6 @@ namespace Models
         public string UserName { get; set; }
         public string NomeImagem { get; set; }
         public string Token { get; set; }
-        public virtual Subscription Subscription { get; set; }
 
     }
 }

@@ -45,6 +45,7 @@ namespace Repositorys
 
         public IQueryable<Client> Where(Expression<Func<Client, bool>> expression)
         {
+            
             return _context.Client.Where(expression).AsQueryable();
         }
 
@@ -66,9 +67,5 @@ namespace Repositorys
             GC.SuppressFinalize(this);
         }
 
-        public IQueryable<Client> GetPagination(Expression<Func<Client, bool>> expression, int sizePage)
-        {
-            return _context.Client.Where(expression).Take(sizePage);
-        }
     }
 }
