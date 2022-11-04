@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Models
 {
     public class ApplicationUserDTO
@@ -8,6 +10,7 @@ namespace Models
         public string UserName { get; set; }
         public string NomeImagem { get; set; }
         public string Token { get; set; }
+        public DateTime SubscriptionDate { get; set; }
 
     }
 }

@@ -281,16 +281,17 @@ namespace vendasnowapi.Controllers
                 var subscription = _subscriptionRepository.GetCurrent(pred);
                 if (subscription == null)
                 {
-                    return BadRequest("Acesso negado! Login inválido ou conta não confirmada!");
+                    return BadRequest("Acesso negado! Usuário sem inscrição!");
                 }
                 
                 var applicationUser = new ApplicationUser();
                 applicationUser.Id = user.Id;
                 var applicationUserDTO = new ApplicationUserDTO();
-                applicationUserDTO.Token = TokenService.GenerateToken(applicationUser, configuration, permission, subscription.SubscriptionDate.AddDays(subscription.Plan.Days).Date);
+                applicationUserDTO.Token = TokenService.GenerateToken(applicationUser, configuration, permission);
                 applicationUserDTO.Email = user.Email;
                 applicationUserDTO.UserName = user.UserName;
                 applicationUserDTO.Role = permission;
+                applicationUserDTO.SubscriptionDate = subscription.SubscriptionDate.AddDays(subscription.Plan.Days).Date;
                 return new JsonResult(applicationUserDTO);
             }
             catch (Exception ex)
@@ -446,11 +447,11 @@ namespace vendasnowapi.Controllers
                 var applicationUser = new ApplicationUser();
                 applicationUser.Id = user.Id;
                 var applicationUserDTO = new ApplicationUserDTO();
-                applicationUserDTO.Token = TokenService.GenerateToken(applicationUser, configuration, permission, subscription.SubscriptionDate);
+                applicationUserDTO.Token = TokenService.GenerateToken(applicationUser, configuration, permission);
                 applicationUserDTO.Email = user.Email;
                 applicationUserDTO.UserName = user.UserName;
                 applicationUserDTO.Role = permission;
-
+                applicationUserDTO.SubscriptionDate = subscription.SubscriptionDate.AddDays(subscription.Plan.Days).Date;
                 return new JsonResult(applicationUserDTO);
             }
             catch (Exception ex)

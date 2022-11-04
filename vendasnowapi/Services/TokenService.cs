@@ -12,7 +12,7 @@ namespace Services
 {
     public static class TokenService
     {
-        public static string GenerateToken(IdentityUser user, IConfiguration configuration, string permission, DateTime subscriptionExpire)
+        public static string GenerateToken(IdentityUser user, IConfiguration configuration, string permission)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(configuration["secretJwt"]);
@@ -26,7 +26,6 @@ namespace Services
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
                 tokenDescriptor.Subject.AddClaim(new Claim(ClaimTypes.Role, permission));
-                tokenDescriptor.Subject.AddClaim(new Claim(ClaimTypes.UserData, subscriptionExpire.ToString()));
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
