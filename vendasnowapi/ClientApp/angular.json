@@ -134,5 +134,8 @@
         }
       }
     }},
-  "defaultProject": "financeiroSPA"
+  "defaultProject": "financeiroSPA",
+  "cli": {
+    "analytics": false
+  }
 }
