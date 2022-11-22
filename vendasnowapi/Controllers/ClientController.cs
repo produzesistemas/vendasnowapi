@@ -15,15 +15,13 @@ namespace vendasnowapi.Controllers
     public class ClientController : ControllerBase
     {
         private IClientRepository _clientRepository;
-        private ISubscriptionRepository _subscriptionRepository;
         public ClientController(
-   IClientRepository ClientRepository, ISubscriptionRepository subscriptionRepository
+   IClientRepository ClientRepository
 
     )
         {
             _clientRepository = ClientRepository;
-            _subscriptionRepository = subscriptionRepository;
-        }
+                    }
 
         [HttpGet()]
         [Route("getAll")]
