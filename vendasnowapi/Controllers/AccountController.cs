@@ -408,12 +408,12 @@ namespace vendasnowapi.Controllers
 
         [HttpPost()]
         [AllowAnonymous]
-        [Route("loginPpague")]
-        public async Task<IActionResult> LoginPpague(LoginUser loginUser)
+        [Route("loginSaloon")]
+        public async Task<IActionResult> LoginSaloon(LoginUser loginUser)
         {
             try
             {
-                var result = await signInManager.PasswordSignInAsync(loginUser.Email, loginUser.Secret, false, false);
+                var result = await signInManager.PasswordSignInAsync(loginUser.Email.Split("@").FirstOrDefault(), loginUser.Secret, false, false);
                 if (!result.Succeeded)
                 {
                     return BadRequest("Acesso negado! Login inválido ou conta não confirmada!");
@@ -427,9 +427,9 @@ namespace vendasnowapi.Controllers
                 var claimsPrincipal = await signInManager.CreateUserPrincipalAsync(user);
                 var claims = claimsPrincipal.Claims.ToList();
                 var permission = claims.Where(c => c.Type.Contains("role")).Select(c => c.Value).FirstOrDefault();
-                if (!permission.Equals("Ppague"))
+                if (!permission.Equals("Saloon"))
                 {
-                    return BadRequest("Acesso negado! Usuário não é usuário do Ppague!");
+                    return BadRequest("Acesso negado! Usuário não tem conta no App de Salão de Beleza!");
                 }
 
                 Expression<Func<Subscription, bool>> ps1, ps2;
@@ -441,7 +441,7 @@ namespace vendasnowapi.Controllers
                 var subscription = _subscriptionRepository.GetCurrent(pred);
                 if (subscription == null)
                 {
-                    return BadRequest("Acesso negado! Login inválido ou conta não confirmada!");
+                    return BadRequest("Acesso negado! Usuário sem inscrição!");
                 }
 
                 var applicationUser = new ApplicationUser();
