@@ -73,23 +73,6 @@
           }
         }
       },
-      "mercadopago-sdk/2.2.2": {
-        "type": "package",
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.1",
-          "System.Configuration.ConfigurationManager": "4.5.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/MercadoPago.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/MercadoPago.dll": {
-            "related": ".pdb;.xml"
-          }
-        }
-      },
       "Microsoft.AspNetCore.Authentication/2.2.0": {
         "type": "package",
         "dependencies": {
@@ -1265,7 +1248,7 @@
           "System.Xml.XDocument": "4.3.0"
         }
       },
-      "Newtonsoft.Json/13.0.1": {
+      "Newtonsoft.Json/12.0.2": {
         "type": "package",
         "compile": {
           "lib/netstandard2.0/Newtonsoft.Json.dll": {
@@ -3191,6 +3174,15 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "PagarmeCoreApi.PCL/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/PagarmeCoreApi.PCL.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/PagarmeCoreApi.PCL.dll": {}
+        }
       }
     }
   },
@@ -3284,26 +3276,6 @@
         "lib/netstandard2.1/LinqKit.xml",
         "linqkit.1.1.24.nupkg.sha512",
         "linqkit.nuspec"
-      ]
-    },
-    "mercadopago-sdk/2.2.2": {
-      "sha512": "jRDm/kBS6N64jd2r43Pdj0WXfbhGQXedn0tvsxpdvY+YGPBwi5iM0eRDvbQWDDYyrHFtOK/w5gkc+jD88W4wGA==",
-      "type": "package",
-      "path": "mercadopago-sdk/2.2.2",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net461/MercadoPago.dll",
-        "lib/net461/MercadoPago.pdb",
-        "lib/net461/MercadoPago.xml",
-        "lib/net5.0/MercadoPago.dll",
-        "lib/net5.0/MercadoPago.pdb",
-        "lib/net5.0/MercadoPago.xml",
-        "lib/netstandard2.0/MercadoPago.dll",
-        "lib/netstandard2.0/MercadoPago.pdb",
-        "lib/netstandard2.0/MercadoPago.xml",
-        "mercadopago-sdk.2.2.2.nupkg.sha512",
-        "mercadopago-sdk.nuspec"
       ]
     },
     "Microsoft.AspNetCore.Authentication/2.2.0": {
@@ -4557,10 +4529,10 @@
         "netstandard.library.nuspec"
       ]
     },
-    "Newtonsoft.Json/13.0.1": {
-      "sha512": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A==",
+    "Newtonsoft.Json/12.0.2": {
+      "sha512": "rTK0s2EKlfHsQsH6Yx2smvcTCeyoDNgCW7FEYyV01drPlh2T243PR2DiDXqtC5N4GDm4Ma/lkxfW5a/4793vbA==",
       "type": "package",
-      "path": "newtonsoft.json/13.0.1",
+      "path": "newtonsoft.json/12.0.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -4579,9 +4551,12 @@
         "lib/netstandard1.3/Newtonsoft.Json.xml",
         "lib/netstandard2.0/Newtonsoft.Json.dll",
         "lib/netstandard2.0/Newtonsoft.Json.xml",
-        "newtonsoft.json.13.0.1.nupkg.sha512",
-        "newtonsoft.json.nuspec",
-        "packageIcon.png"
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "newtonsoft.json.12.0.2.nupkg.sha512",
+        "newtonsoft.json.nuspec"
       ]
     },
     "Newtonsoft.Json.Bson/1.0.2": {
@@ -9301,6 +9276,11 @@
         "system.xml.xmlserializer.4.3.0.nupkg.sha512",
         "system.xml.xmlserializer.nuspec"
       ]
+    },
+    "PagarmeCoreApi.PCL/1.0.0": {
+      "type": "project",
+      "path": "../../pagarme-core-api-dotnet-framework/PagarmeCoreApi.PCL/PagarmeCoreApi.PCL.csproj",
+      "msbuildProject": "../../pagarme-core-api-dotnet-framework/PagarmeCoreApi.PCL/PagarmeCoreApi.PCL.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -9315,7 +9295,7 @@
       "Microsoft.EntityFrameworkCore.Proxies >= 3.1.9",
       "Microsoft.EntityFrameworkCore.SqlServer >= 3.1.9",
       "Microsoft.EntityFrameworkCore.Tools >= 3.1.9",
-      "mercadopago-sdk >= 2.2.2"
+      "PagarmeCoreApi.PCL >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -9352,7 +9332,11 @@
       "frameworks": {
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Paulo Sérgio\\Documents\\pagarme-core-api-dotnet-framework\\PagarmeCoreApi.PCL\\PagarmeCoreApi.PCL.csproj": {
+              "projectPath": "C:\\Users\\Paulo Sérgio\\Documents\\pagarme-core-api-dotnet-framework\\PagarmeCoreApi.PCL\\PagarmeCoreApi.PCL.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -9406,10 +9390,6 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[3.1.9, )"
-          },
-          "mercadopago-sdk": {
-            "target": "Package",
-            "version": "[2.2.2, )"
           }
         },
         "imports": [

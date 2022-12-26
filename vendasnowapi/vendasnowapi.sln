@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vendasnowapi", "vendasnowapi.csproj", "{694557BC-F902-4BED-80BB-AA3F2E281424}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vendasnowapi", "vendasnowapi.csproj", "{694557BC-F902-4BED-80BB-AA3F2E281424}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PagarmeCoreApi.PCL", "..\..\pagarme-core-api-dotnet-framework\PagarmeCoreApi.PCL\PagarmeCoreApi.PCL.csproj", "{36088006-1B8A-4353-BA88-F9F7B3FFD908}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{694557BC-F902-4BED-80BB-AA3F2E281424}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{694557BC-F902-4BED-80BB-AA3F2E281424}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{694557BC-F902-4BED-80BB-AA3F2E281424}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36088006-1B8A-4353-BA88-F9F7B3FFD908}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36088006-1B8A-4353-BA88-F9F7B3FFD908}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36088006-1B8A-4353-BA88-F9F7B3FFD908}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36088006-1B8A-4353-BA88-F9F7B3FFD908}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

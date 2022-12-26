@@ -4,6 +4,21 @@
     "C:\\Users\\Paulo Sérgio\\Documents\\vendasnowapi\\vendasnowapi\\vendasnowapi.csproj": {}
   },
   "projects": {
+    "C:\\Users\\Paulo Sérgio\\Documents\\pagarme-core-api-dotnet-framework\\PagarmeCoreApi.PCL\\PagarmeCoreApi.PCL.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Paulo Sérgio\\Documents\\pagarme-core-api-dotnet-framework\\PagarmeCoreApi.PCL\\PagarmeCoreApi.PCL.csproj",
+        "projectName": "PagarmeCoreApi.PCL",
+        "projectPath": "C:\\Users\\Paulo Sérgio\\Documents\\pagarme-core-api-dotnet-framework\\PagarmeCoreApi.PCL\\PagarmeCoreApi.PCL.csproj",
+        "frameworks": {
+          "portable40-net40+sl5+win8+wp8+wpa81": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "portable40-net40+sl5+win8+wp8+wpa81": {}
+      }
+    },
     "C:\\Users\\Paulo Sérgio\\Documents\\vendasnowapi\\vendasnowapi\\vendasnowapi.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -33,7 +48,11 @@
         "frameworks": {
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\Paulo Sérgio\\Documents\\pagarme-core-api-dotnet-framework\\PagarmeCoreApi.PCL\\PagarmeCoreApi.PCL.csproj": {
+                "projectPath": "C:\\Users\\Paulo Sérgio\\Documents\\pagarme-core-api-dotnet-framework\\PagarmeCoreApi.PCL\\PagarmeCoreApi.PCL.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -87,10 +106,6 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[3.1.9, )"
-            },
-            "mercadopago-sdk": {
-              "target": "Package",
-              "version": "[2.2.2, )"
             }
           },
           "imports": [

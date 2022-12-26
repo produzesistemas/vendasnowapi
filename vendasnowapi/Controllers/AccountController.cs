@@ -132,7 +132,13 @@ namespace vendasnowapi.Controllers
                     PhoneNumberConfirmed = false,
                     TwoFactorEnabled = false,
                     LockoutEnabled = true,
-                    AccessFailedCount = Convert.ToInt32(decimal.Zero)
+                    AccessFailedCount = Convert.ToInt32(decimal.Zero),
+                     Address = loginUser.Address,
+                      Cnpj = loginUser.Cnpj,
+                       EstablishmentName= loginUser.EstablishmentName,
+                        PhoneNumber = loginUser.PhoneNumber,
+                         ResponsibleName= loginUser.ResponsibleName,
+                          TypeId= loginUser.TypeId
                 };
 
                 IdentityResult addUserResult = await userManager.CreateAsync(user, loginUser.Secret);
@@ -464,6 +470,7 @@ namespace vendasnowapi.Controllers
             }
 
         }
+
 
     }
 }
