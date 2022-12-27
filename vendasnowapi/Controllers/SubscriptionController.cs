@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Models;
-using System.Security.Claims;
 using System;
 using UnitOfWork;
-using System.Linq;
 using System.Threading.Tasks;
-using PagarmeCoreApi.PCL;
+using System.Net.Http;
 
 namespace vendasnowapi.Controllers
 {
@@ -25,20 +23,50 @@ namespace vendasnowapi.Controllers
         {
             try
             {
-                ClaimsPrincipal currentUser = this.User;
-                var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
-                if (id == null)
+                //ClaimsPrincipal currentUser = this.User;
+                //var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
+                //if (id == null)
+                //{
+                //    return BadRequest("Identificação do usuário não encontrada.");
+                //}
+
+                //string basicAuthUserName = "basicAuthUserName"; // The username to use with basic authentication
+                //string basicAuthPassword = "basicAuthPassword"; // The password to use with basic authentication
+
+                //PagarmeCoreApiClient client = new PagarmeCoreApiClient(basicAuthUserName, basicAuthPassword);
+
+                using (var httpClient = new HttpClient())
                 {
-                    return BadRequest("Identificação do usuário não encontrada.");
+                    var transaction = new Models.PagarMe.Transaction();
+                    transaction.amount = "1000";
+                    transaction.api_key = "pk_weQ4owu0GSPx4yNJ";
+                    transaction.capture = "false";
+                    transaction.card_hash = _subscription.Card_Hash;
+                    transaction.Customer = new Models.PagarMe.Customer();
+                    transaction.Customer.document_number = "92545278157";
+                    transaction.Customer.email = "jappleseed@apple.com";
+                    transaction.Customer.name = "John Appleseed";
+                    transaction.Customer.Address = new Models.PagarMe.Address();
+                    transaction.Customer.Address.neighborhood = "Bonfim";
+                    transaction.Customer.Address.street = "Rua da Imperatriz, 80";
+                    transaction.Customer.Address.street_number = "80";
+                    transaction.Customer.Address.zipcode = "40415180";
+                    transaction.Customer.Phone = new Models.PagarMe.Phone();
+                    transaction.Customer.Phone.ddd = "71";
+                    transaction.Customer.Phone.number = "994100367";
+
+
+
+                    return new JsonResult(transaction);
+
+
                 }
 
-                string basicAuthUserName = "basicAuthUserName"; // The username to use with basic authentication
-                string basicAuthPassword = "basicAuthPassword"; // The password to use with basic authentication
-
-                PagarmeCoreApiClient client = new PagarmeCoreApiClient(basicAuthUserName, basicAuthPassword);
 
 
-                return new JsonResult(_subscription);
+
+
+                    
             }
             catch (Exception ex)
             {

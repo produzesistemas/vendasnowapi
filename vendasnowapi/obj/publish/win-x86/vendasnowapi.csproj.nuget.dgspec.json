@@ -87,10 +87,6 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[3.1.9, )"
-            },
-            "mercadopago-sdk": {
-              "target": "Package",
-              "version": "[2.2.2, )"
             }
           },
           "imports": [

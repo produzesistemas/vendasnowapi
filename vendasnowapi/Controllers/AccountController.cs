@@ -133,12 +133,7 @@ namespace vendasnowapi.Controllers
                     TwoFactorEnabled = false,
                     LockoutEnabled = true,
                     AccessFailedCount = Convert.ToInt32(decimal.Zero),
-                     Address = loginUser.Address,
-                      Cnpj = loginUser.Cnpj,
-                       EstablishmentName= loginUser.EstablishmentName,
-                        PhoneNumber = loginUser.PhoneNumber,
-                         ResponsibleName= loginUser.ResponsibleName,
-                          TypeId= loginUser.TypeId
+                        PhoneNumber = loginUser.PhoneNumber
                 };
 
                 IdentityResult addUserResult = await userManager.CreateAsync(user, loginUser.Secret);

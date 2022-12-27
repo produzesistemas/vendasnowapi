@@ -12,6 +12,9 @@ namespace Models
         public DateTime SubscriptionDate { get; set; }
 
         [NotMapped]
+        public virtual string Card_Hash { get; set; }
+
+        [NotMapped]
         public virtual Plan Plan { get; set; }
     }
 }

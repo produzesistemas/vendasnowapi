@@ -10,11 +10,7 @@ namespace Models
         public string Provider { get; set; }
         public string ProviderId { get; set; }
         public string ImageName { get; set; }
-        public string EstablishmentName { get; set; }
-        public string ResponsibleName { get; set; }
-        public int? TypeId { get; set; }
-        public string Address { get; set; }
-        public string Cnpj { get; set; }
+
 
         [NotMapped]
         public string Token { get; set; }
