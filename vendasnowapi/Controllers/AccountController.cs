@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using UnitOfWork;
 using System.Linq.Expressions;
 using LinqKit;
+using System.ComponentModel.Design;
 
 namespace vendasnowapi.Controllers
 {
@@ -24,16 +25,22 @@ namespace vendasnowapi.Controllers
         private readonly SignInManager<ApplicationUser> signInManager;
         private IConfiguration configuration;
         private ISubscriptionRepository _subscriptionRepository;
+        private IEstablishmentRepository _establishmentRepository;
+        private IAspNetUsersEstablishmentRepository _aspNetUsersEstablishmentRepository;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ISubscriptionRepository subscriptionRepository,
+            IEstablishmentRepository establishmentRepository,
+            IAspNetUsersEstablishmentRepository aspNetUsersEstablishmentRepository,
             IConfiguration Configuration)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.configuration = Configuration;
             this._subscriptionRepository = subscriptionRepository;
+            this._aspNetUsersEstablishmentRepository= aspNetUsersEstablishmentRepository;
+            this._establishmentRepository= establishmentRepository;
         }
 
         [HttpPost()]
@@ -132,8 +139,7 @@ namespace vendasnowapi.Controllers
                     PhoneNumberConfirmed = false,
                     TwoFactorEnabled = false,
                     LockoutEnabled = true,
-                    AccessFailedCount = Convert.ToInt32(decimal.Zero),
-                        PhoneNumber = loginUser.PhoneNumber
+                    AccessFailedCount = Convert.ToInt32(decimal.Zero)
                 };
 
                 IdentityResult addUserResult = await userManager.CreateAsync(user, loginUser.Secret);
@@ -409,8 +415,8 @@ namespace vendasnowapi.Controllers
 
         [HttpPost()]
         [AllowAnonymous]
-        [Route("loginSaloon")]
-        public async Task<IActionResult> LoginSaloon(LoginUser loginUser)
+        [Route("loginBeauty")]
+        public async Task<IActionResult> LoginBeauty(LoginUser loginUser)
         {
             try
             {
@@ -466,6 +472,76 @@ namespace vendasnowapi.Controllers
 
         }
 
+        [HttpPost()]
+        [AllowAnonymous]
+        [Route("registerBeauty")]
+        public async Task<IActionResult> RegisterBeauty(RegisterBeauty registerBeauty)
+        {
+            try
+            {
+                var applicationUser = this.userManager.FindByEmailAsync(registerBeauty.Email);
+                if (applicationUser.Result != null)
+                {
+                    return BadRequest("Usuário já registrado. Verifique sua caixa de email e confirme o cadastro ou recupere sua senha.");
+                }
 
+                var user = new ApplicationUser()
+                {
+                    UserName = registerBeauty.Email.Split("@").FirstOrDefault(),
+                    Email = registerBeauty.Email,
+                    EmailConfirmed = false,
+                    PhoneNumberConfirmed = false,
+                    TwoFactorEnabled = false,
+                    LockoutEnabled = true,
+                    AccessFailedCount = Convert.ToInt32(decimal.Zero),
+                     PhoneNumber = registerBeauty.PhoneNumber
+                };
+
+                IdentityResult addUserResult = await userManager.CreateAsync(user, registerBeauty.Secret);
+
+                if (addUserResult.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user, registerBeauty.AppName);
+                    var code = Guid.NewGuid().ToString();
+                    await userManager.AddClaimAsync(user, new Claim("CodeConfirmation", code));
+
+                    var establishment = new Establishment()
+                    {
+                        Active = true,
+                        Address = registerBeauty.Address,
+                        Cnpj = registerBeauty.Cnpj,
+                        Description = registerBeauty.Description,
+                        Name = registerBeauty.Name,
+                        Responsible = registerBeauty.Responsible,
+                        TypeId = registerBeauty.TypeId,
+                    };
+
+                    _establishmentRepository.Insert(establishment);
+
+                    _aspNetUsersEstablishmentRepository.Insert(new AspNetUsersEstablishment()
+                    {
+                        EstablishmentId = establishment.Id,
+                        AspNetUsersId = user.Id
+                    });
+
+                    sendEmailConfirmUser(registerBeauty.Email, code, user.Id, registerBeauty.AppName);
+                }
+                else
+                {
+                    if (addUserResult.Errors.FirstOrDefault().Code.Equals("PasswordTooShort")) { return BadRequest("A senha deve ter no mínimo 6 caracteres"); }
+                    if (addUserResult.Errors.FirstOrDefault().Code.Equals("InvalidEmail")) { return BadRequest("E-mail inválido!"); }
+                    if (addUserResult.Errors.FirstOrDefault().Code.Equals("InvalidUserName")) { return BadRequest("Nome do usuário inválido. Use apenas letras e números."); }
+                    return BadRequest(addUserResult.Errors.FirstOrDefault().ToString());
+                }
+
+                return new JsonResult("Usuário registrado com sucesso! Verifique sua caixa de email e confirme o cadastro.");
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException);
+            }
+
+        }
     }
 }

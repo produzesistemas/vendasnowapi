@@ -61,6 +61,7 @@ namespace vendasnowapi
             services.AddScoped(typeof(IAccountRepository), typeof(AccountRepository));
             services.AddScoped(typeof(ISubscriptionRepository), typeof(SubscriptionRepository));
             services.AddScoped(typeof(IPlanRepository), typeof(PlanRepository));
+            services.AddScoped(typeof(IEstablishmentRepository), typeof(EstablishmentRepository));
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
