@@ -16,6 +16,8 @@ namespace Models
         public string Token { get; set; }
         [NotMapped]
         public string Role { get; set; }
+        [NotMapped]
+        public Establishment Establishment { get; set; }
 
         public static explicit operator ApplicationUser(string v)
         {

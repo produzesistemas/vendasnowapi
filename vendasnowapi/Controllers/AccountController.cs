@@ -14,6 +14,9 @@ using UnitOfWork;
 using System.Linq.Expressions;
 using LinqKit;
 using System.ComponentModel.Design;
+using Microsoft.Extensions.Hosting;
+using static System.Net.Mime.MediaTypeNames;
+using System.IO;
 
 namespace vendasnowapi.Controllers
 {
@@ -24,22 +27,22 @@ namespace vendasnowapi.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
         private IConfiguration configuration;
+        private IWebHostEnvironment _hostEnvironment;
         private ISubscriptionRepository _subscriptionRepository;
         private IEstablishmentRepository _establishmentRepository;
-        private IAspNetUsersEstablishmentRepository _aspNetUsersEstablishmentRepository;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+            IWebHostEnvironment environment,
             ISubscriptionRepository subscriptionRepository,
             IEstablishmentRepository establishmentRepository,
-            IAspNetUsersEstablishmentRepository aspNetUsersEstablishmentRepository,
             IConfiguration Configuration)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            _hostEnvironment = environment;
             this.configuration = Configuration;
             this._subscriptionRepository = subscriptionRepository;
-            this._aspNetUsersEstablishmentRepository= aspNetUsersEstablishmentRepository;
             this._establishmentRepository= establishmentRepository;
         }
 
@@ -514,15 +517,19 @@ namespace vendasnowapi.Controllers
                         Name = registerBeauty.Name,
                         Responsible = registerBeauty.Responsible,
                         TypeId = registerBeauty.TypeId,
+                         AspNetUsersId = user.Id
                     };
 
                     _establishmentRepository.Insert(establishment);
 
-                    _aspNetUsersEstablishmentRepository.Insert(new AspNetUsersEstablishment()
-                    {
-                        EstablishmentId = establishment.Id,
-                        AspNetUsersId = user.Id
-                    });
+                    //var pathToSave = string.Concat(_hostEnvironment.ContentRootPath, configuration["pathFileEstablishment"]);
+                    //byte[] imageBytes = Convert.FromBase64String(registerBeauty.Base64);
+                    //var fullPath = Path.Combine(pathToSave, "teste.jpg");
+
+                    //using (var stream = new FileStream(fullPath, FileMode.Create))
+                    //{
+                    //    files[counter].CopyTo(stream);
+                    //}
 
                     sendEmailConfirmUser(registerBeauty.Email, code, user.Id, registerBeauty.AppName);
                 }

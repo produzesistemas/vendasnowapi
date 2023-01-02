@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Models.Checkout;
 using System.Net.Http.Headers;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Microsoft.Extensions.Configuration;
 
 namespace vendasnowapi.Controllers
 {
@@ -20,9 +21,13 @@ namespace vendasnowapi.Controllers
     public class SubscriptionController : ControllerBase
     {
         private ISubscriptionRepository _subscriptionRepository;
-        public SubscriptionController(ISubscriptionRepository SubscriptionRepository)
+        private IConfiguration configuration;
+
+        public SubscriptionController(ISubscriptionRepository SubscriptionRepository,
+            IConfiguration Configuration)
         {
-            this._subscriptionRepository = SubscriptionRepository;
+            this._subscriptionRepository = SubscriptionRepository; 
+            this.configuration = Configuration;
         }
 
         [HttpPost()]
@@ -41,18 +46,16 @@ namespace vendasnowapi.Controllers
                 using (var httpClient = new HttpClient())
                 {
 
-                    var request = new HttpRequestMessage(HttpMethod.Post, "https://apisandbox.cieloecommerce.cielo.com.br/1/sales/");
+                    var request = new HttpRequestMessage(HttpMethod.Post, configuration["UrlRequisicaoCielo"].ToString());
                     request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    request.Headers.Add("MerchantId", "52b1e339-f735-4db9-9909-2408f4a23382");
-                    request.Headers.Add("MerchantKey", "QTXQVXZMTHNJMVNFBCKRXZSGWAYMQQNFKPJPPSMI");
+                    request.Headers.Add("MerchantId", configuration["MerchantId"].ToString());
+                    request.Headers.Add("MerchantKey", configuration["MerchantKey"].ToString());
 
                     var CreditCard = new CreditCard()
                     {
-                         Brand = "Visa",
-                          CardNumber = "4024.0071.5376.3191",
-                           ExpirationDate = "12/2021",
-                            Holder = "Teste Holder",
-                             SecurityCode = "123"
+                        CardToken = _subscription.CardToken,
+                        Brand = "Visa",
+                        SecurityCode = "123"
                     };
                     var Payment = new Payment()
                     {
@@ -73,7 +76,7 @@ namespace vendasnowapi.Controllers
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                     var response = await httpClient.SendAsync(request);
                     response.EnsureSuccessStatusCode();
-                    var content = await response.Content.ReadAsStringAsync();
+                    var content = JsonConvert.SerializeObject(await response.Content.ReadAsStringAsync());
                     return new JsonResult(content);
 
 

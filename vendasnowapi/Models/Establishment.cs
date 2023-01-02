@@ -13,5 +13,7 @@ namespace Models
         public string Address { get; set; }
         public string Cnpj { get; set; }
         public bool Active { get; set; }
+        public string AspNetUsersId { get; set; }
+
     }
 }

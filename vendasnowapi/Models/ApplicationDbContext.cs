@@ -27,7 +27,6 @@ namespace Models
             modelBuilder.Entity<SaleService>().HasKey(c => c.Id);
             modelBuilder.Entity<Account>().HasKey(c => c.Id);
             modelBuilder.Entity<Establishment>().HasKey(c => c.Id);
-            modelBuilder.Entity<AspNetUsersEstablishment>().HasKey(c => c.Id);
 
             modelBuilder.Entity<Sale>().HasOne(c => c.PaymentCondition);
             modelBuilder.Entity<Sale>().HasOne(c => c.Client);
@@ -37,10 +36,6 @@ namespace Models
             modelBuilder.Entity<Product>().HasMany(c => c.SaleProduct).WithOne(b => b.Product).HasForeignKey(c => c.ProductId);
             modelBuilder.Entity<SaleProduct>().HasOne(c => c.Sale);
             modelBuilder.Entity<SaleService>().HasOne(c => c.Sale);
-
-            modelBuilder.Entity<AspNetUsersEstablishment>().HasOne(c => c.Establishment);
-            modelBuilder.Entity<AspNetUsersEstablishment>().HasOne(c => c.ApplicationUser);
-
 
             base.OnModelCreating(modelBuilder);
         }
@@ -55,9 +50,7 @@ namespace Models
         public DbSet<Sale> Sale { get; set; }
         public DbSet<Plan> Plan { get; set; }
         public DbSet<Subscription> Subscription { get; set; }
-
         public DbSet<Establishment> Establishment { get; set; }
-        public DbSet<AspNetUsersEstablishment> AspNetUsersEstablishment { get; set; }
 
     }
 }
