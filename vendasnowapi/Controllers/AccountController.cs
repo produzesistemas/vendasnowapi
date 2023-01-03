@@ -188,6 +188,12 @@ namespace vendasnowapi.Controllers
                         "<div><a href=" + configuration["Dominio"].ToString() + "/user/confirm/" + userId + "/" + code + ">Clique para validar</a>" +
                         "<div></div>";
                         break;
+                    case "AppBeauty":
+                        mail.Body = "<div style='padding-top: 15px;padding-bottom: 15px;'><img src='" + string.Concat(configuration["Dominio"].ToString(), "/assets/logo_arredondado_app.png") + "' width='100'></div>" +
+                        "<div style='padding-top: 15px;'>Clique no link abaixo para validar seu email no aplicativo.</div>" +
+                        "<div><a href=" + configuration["Dominio"].ToString() + "/user/confirm/" + userId + "/" + code + ">Clique para validar</a>" +
+                        "<div></div>";
+                        break;
                     default:
                         Console.WriteLine("Default case");
                     break;
@@ -225,6 +231,12 @@ namespace vendasnowapi.Controllers
                 switch (appName)
                 {
                     case "VendasNow":
+                        mail.Body = "<div style='padding-top: 15px;padding-bottom: 15px;'><img src='" + string.Concat(configuration["Dominio"].ToString(), "/assets/logo_arredondado_app.png") + "' width='100'></div>" +
+                        "<div style='padding-top: 15px;'>Clique no link abaixo para validar seu email no aplicativo.</div>" +
+                        "<div><a href=" + configuration["Dominio"].ToString() + "/user/confirmForgot/" + userId + "/" + code + ">Clique para validar</a>" +
+                        "<div></div>";
+                        break;
+                    case "AppBeauty":
                         mail.Body = "<div style='padding-top: 15px;padding-bottom: 15px;'><img src='" + string.Concat(configuration["Dominio"].ToString(), "/assets/logo_arredondado_app.png") + "' width='100'></div>" +
                         "<div style='padding-top: 15px;'>Clique no link abaixo para validar seu email no aplicativo.</div>" +
                         "<div><a href=" + configuration["Dominio"].ToString() + "/user/confirmForgot/" + userId + "/" + code + ">Clique para validar</a>" +
@@ -437,7 +449,7 @@ namespace vendasnowapi.Controllers
                 var claimsPrincipal = await signInManager.CreateUserPrincipalAsync(user);
                 var claims = claimsPrincipal.Claims.ToList();
                 var permission = claims.Where(c => c.Type.Contains("role")).Select(c => c.Value).FirstOrDefault();
-                if (!permission.Equals("Saloon"))
+                if (!permission.Equals("AppBeauty"))
                 {
                     return BadRequest("Acesso negado! Usuário não tem conta no App de Salão de Beleza!");
                 }
@@ -517,7 +529,7 @@ namespace vendasnowapi.Controllers
                         Name = registerBeauty.Name,
                         Responsible = registerBeauty.Responsible,
                         TypeId = registerBeauty.TypeId,
-                         AspNetUsersId = user.Id
+                        AspNetUsersId = user.Id
                     };
 
                     _establishmentRepository.Insert(establishment);
