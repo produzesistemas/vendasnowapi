@@ -522,14 +522,18 @@ namespace vendasnowapi.Controllers
 
                     _establishmentRepository.Insert(establishment);
 
-                    //var pathToSave = string.Concat(_hostEnvironment.ContentRootPath, configuration["pathFileEstablishment"]);
-                    //byte[] imageBytes = Convert.FromBase64String(registerBeauty.Base64);
-                    //var fullPath = Path.Combine(pathToSave, "teste.jpg");
+                    var pathToSave = string.Concat(_hostEnvironment.ContentRootPath, configuration["pathFileEstablishment"]);
+                    var fileName = string.Concat(Guid.NewGuid().ToString(), ".jpg");
+                    byte[] imageBytes = Convert.FromBase64String(registerBeauty.Base64);
+                    var fullPath = Path.Combine(pathToSave, fileName);
 
-                    //using (var stream = new FileStream(fullPath, FileMode.Create))
-                    //{
-                    //    files[counter].CopyTo(stream);
-                    //}
+                    using (MemoryStream ms = new MemoryStream(imageBytes))
+                    {
+                        using (var stream = new FileStream(fullPath, FileMode.Create))
+                        {
+                            ms.CopyTo(stream);
+                        }
+                    }
 
                     sendEmailConfirmUser(registerBeauty.Email, code, user.Id, registerBeauty.AppName);
                 }

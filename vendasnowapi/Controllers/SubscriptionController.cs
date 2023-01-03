@@ -78,8 +78,6 @@ namespace vendasnowapi.Controllers
                     response.EnsureSuccessStatusCode();
                     var content = JsonConvert.SerializeObject(await response.Content.ReadAsStringAsync());
                     return new JsonResult(content);
-
-
                 }
 
             }
