@@ -11,4 +11,8 @@ export class AuthenticationService extends GenericHttpService<any>{
             confirmUser(user) {
                 return this.post('account/confirm', user);
             }
+
+            confirmUserForgot(user) {
+                return this.post('account/confirmForgot', user);
+            }
 }

@@ -6,6 +6,7 @@ import { QuemSomosModule } from 'src/app/quem-somos/quem-somos.module';
 import { AccessDeniedComponent } from 'src/app/access-denied/access-denied.component';
 import { PoliticaPrivacidadeModule } from './politica-privacidade/politica-privacidade.module';
 import { UserModule } from './user/user.module';
+import { UserForgotModule } from './user-forgot/user-forgot.module';
 
 const routes: Routes = [
   {
@@ -17,6 +18,7 @@ const routes: Routes = [
       { path: 'quem-somos', loadChildren: () => QuemSomosModule },
       { path: 'privacidade/vendasnow', loadChildren: () => PoliticaPrivacidadeModule },
       { path: 'user/confirm', loadChildren: () => UserModule },
+      { path: 'user-forgot/confirm', loadChildren: () => UserForgotModule },
     ]
   },
   {

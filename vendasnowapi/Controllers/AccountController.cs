@@ -233,13 +233,13 @@ namespace vendasnowapi.Controllers
                     case "VendasNow":
                         mail.Body = "<div style='padding-top: 15px;padding-bottom: 15px;'><img src='" + string.Concat(configuration["Dominio"].ToString(), "/assets/logo_arredondado_app.png") + "' width='100'></div>" +
                         "<div style='padding-top: 15px;'>Clique no link abaixo para validar seu email no aplicativo.</div>" +
-                        "<div><a href=" + configuration["Dominio"].ToString() + "/user/confirmForgot/" + userId + "/" + code + ">Clique para validar</a>" +
+                        "<div><a href=" + configuration["Dominio"].ToString() + "/user-forgot/confirm/" + userId + "/" + code + ">Clique para validar</a>" +
                         "<div></div>";
                         break;
                     case "AppBeauty":
                         mail.Body = "<div style='padding-top: 15px;padding-bottom: 15px;'><img src='" + string.Concat(configuration["Dominio"].ToString(), "/assets/logo_arredondado_app.png") + "' width='100'></div>" +
                         "<div style='padding-top: 15px;'>Clique no link abaixo para validar seu email no aplicativo.</div>" +
-                        "<div><a href=" + configuration["Dominio"].ToString() + "/user/confirmForgot/" + userId + "/" + code + ">Clique para validar</a>" +
+                        "<div><a href=" + configuration["Dominio"].ToString() + "/user-forgot/confirm/" + userId + "/" + code + ">Clique para validar</a>" +
                         "<div></div>";
                         break;
                     default:
@@ -509,7 +509,7 @@ namespace vendasnowapi.Controllers
                     TwoFactorEnabled = false,
                     LockoutEnabled = true,
                     AccessFailedCount = Convert.ToInt32(decimal.Zero),
-                     PhoneNumber = registerBeauty.PhoneNumber
+                    PhoneNumber = registerBeauty.PhoneNumber
                 };
 
                 IdentityResult addUserResult = await userManager.CreateAsync(user, registerBeauty.Secret);
@@ -532,10 +532,9 @@ namespace vendasnowapi.Controllers
                         AspNetUsersId = user.Id
                     };
 
-                    _establishmentRepository.Insert(establishment);
-
                     var pathToSave = string.Concat(_hostEnvironment.ContentRootPath, configuration["pathFileEstablishment"]);
                     var fileName = string.Concat(Guid.NewGuid().ToString(), ".jpg");
+                    establishment.ImageName = fileName;
                     byte[] imageBytes = Convert.FromBase64String(registerBeauty.Base64);
                     var fullPath = Path.Combine(pathToSave, fileName);
 
@@ -546,6 +545,7 @@ namespace vendasnowapi.Controllers
                             ms.CopyTo(stream);
                         }
                     }
+                    _establishmentRepository.Insert(establishment);
 
                     sendEmailConfirmUser(registerBeauty.Email, code, user.Id, registerBeauty.AppName);
                 }
