@@ -529,7 +529,8 @@ namespace vendasnowapi.Controllers
                         Name = registerBeauty.Name,
                         Responsible = registerBeauty.Responsible,
                         TypeId = registerBeauty.TypeId,
-                        AspNetUsersId = user.Id
+                        AspNetUsersId = user.Id,
+                        Scheduling = registerBeauty.Scheduling
                     };
 
                     var pathToSave = string.Concat(_hostEnvironment.ContentRootPath, configuration["pathFileEstablishment"]);

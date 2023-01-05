@@ -66,7 +66,7 @@ namespace Repositorys
             var entityBase = _context.Establishment.Single(x => x.Id == entity.Id);
 
             entityBase.Description = entity.Description;
-
+            entityBase.Scheduling = entity.Scheduling;
 
             if (entity.ImageName != null) { entityBase.ImageName = entity.ImageName; }
 

@@ -17,5 +17,6 @@ namespace Models
         public string Address { get; set; }
         public string Cnpj { get; set; }
         public string PhoneNumber { get; set; }
+        public bool Scheduling { get; set; }
     }
 }
