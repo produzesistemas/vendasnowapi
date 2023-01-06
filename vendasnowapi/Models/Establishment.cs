@@ -16,5 +16,8 @@ namespace Models
         public string AspNetUsersId { get; set; }
         public bool Scheduling { get; set; }
 
+        [NotMapped]
+        public virtual Subscription Subscription { get; set; }
+
     }
 }

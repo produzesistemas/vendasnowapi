@@ -8,5 +8,6 @@ namespace Models
         public bool Active { get; set; }
         public int Days { get; set; }
         public string Description { get; set; }
+        public string AppName { get; set; }
     }
 }

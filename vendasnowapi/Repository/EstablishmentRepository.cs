@@ -4,7 +4,6 @@ using UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System;
-using System.Collections.Generic;
 using LinqKit;
 using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 
@@ -98,5 +97,31 @@ namespace Repositorys
             GC.SuppressFinalize(this);
         }
 
+        public Establishment GetByUser(string id)
+        {
+            Expression<Func<Establishment, bool>> pred1;
+            var pred = PredicateBuilder.New<Establishment>();
+            pred1 = p => p.AspNetUsersId.Equals(id);
+            pred = pred.And(pred1);
+
+            var establishment = _context.Establishment.FirstOrDefault(pred);
+
+            if (establishment != null)
+            {
+                Expression<Func<Subscription, bool>> ps1, ps2;
+                var predicate = PredicateBuilder.New<Subscription>();
+                ps1 = p => p.AspNetUsersId.Equals(id);
+                predicate = predicate.And(ps1);
+                ps2 = p => p.Active == true;
+                predicate = predicate.And(ps2);
+                establishment.Subscription = _context.Subscription
+                    .Include(x => x.Plan)
+                    .Where(predicate)
+                    .OrderByDescending(x => x.SubscriptionDate)
+                    .FirstOrDefault();
+            }
+
+            return establishment;
+        }
     }
 }

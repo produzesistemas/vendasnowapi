@@ -567,5 +567,26 @@ namespace vendasnowapi.Controllers
             }
 
         }
+
+        [HttpGet()]
+        [Route("myAccountBeauty")]
+        [Authorize()]
+        public IActionResult MyAccountBeauty()
+        {
+            try
+            {
+                ClaimsPrincipal currentUser = this.User;
+                var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
+                if (id == null)
+                {
+                    return BadRequest("Identificação do usuário não encontrada.");
+                }
+                return new JsonResult(_establishmentRepository.GetByUser(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(string.Concat("Falha no carregamento da conta: ", ex.Message));
+            }
+        }
     }
 }

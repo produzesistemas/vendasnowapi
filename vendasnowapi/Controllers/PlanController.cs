@@ -29,10 +29,12 @@ namespace vendasnowapi.Controllers
         {
             try
             {
-                Expression<Func<Plan, bool>> p1;
+                Expression<Func<Plan, bool>> p1, p2;
                 var predicate = PredicateBuilder.New<Plan>();
                 p1 = p => p.Active == true;
                 predicate = predicate.And(p1);
+                p2 = p => p.AppName == "VendasNow";
+                predicate = predicate.And(p2);
                 return new JsonResult(PlanRepository.Where(predicate));
             }
             catch (Exception ex)
