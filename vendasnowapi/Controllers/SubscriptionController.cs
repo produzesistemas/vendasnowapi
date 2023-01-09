@@ -5,14 +5,16 @@ using UnitOfWork;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text;
-using System.Security.Policy;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
 using Models.Checkout;
 using System.Net.Http.Headers;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using Repositorys;
+using System.Security.Claims;
+using System.Linq;
+using LinqKit;
+using System.Linq.Expressions;
 
 namespace vendasnowapi.Controllers
 {
@@ -84,6 +86,33 @@ namespace vendasnowapi.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet()]
+        [Route("getCurrent")]
+        [Authorize()]
+        public IActionResult GetCurrent()
+        {
+            try
+            {
+                ClaimsPrincipal currentUser = this.User;
+                var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
+                if (id == null)
+                {
+                    return BadRequest("Identificação do usuário não encontrada.");
+                }
+                Expression<Func<Subscription, bool>> ps1, ps2;
+                var pred = PredicateBuilder.New<Subscription>();
+                ps1 = p => p.AspNetUsersId.Equals(id);
+                pred = pred.And(ps1);
+                ps2 = p => p.Active == true;
+                pred = pred.And(ps2);
+                return new JsonResult(_subscriptionRepository.GetCurrent(pred));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(string.Concat("Falha no carregamento da conta: ", ex.Message));
             }
         }
     }
