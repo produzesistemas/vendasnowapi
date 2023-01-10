@@ -34,16 +34,17 @@ namespace vendasnowapi.Controllers
 
         [HttpPost()]
         [Route("save")]
+        [Authorize()]
         public async Task<IActionResult> SaveAsync([FromBody] Subscription _subscription)
         {
             try
             {
-                //ClaimsPrincipal currentUser = this.User;
-                //var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
-                //if (id == null)
-                //{
-                //    return BadRequest("Identificação do usuário não encontrada.");
-                //}
+                ClaimsPrincipal currentUser = this.User;
+                var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
+                if (id == null)
+                {
+                    return BadRequest("Identificação do usuário não encontrada.");
+                }
 
                 using (var httpClient = new HttpClient())
                 {
@@ -56,21 +57,25 @@ namespace vendasnowapi.Controllers
                     var CreditCard = new CreditCard()
                     {
                         CardToken = _subscription.CardToken,
-                        Brand = "Visa",
-                        SecurityCode = "123"
+                        Brand = _subscription.Brand,
+                        SecurityCode = _subscription.SecurityCode
                     };
+                    var valueStr = Convert.ToString(_subscription.Value);
+                    var str = valueStr.Split(",");
+                    var decimals = str[1].PadRight(2, '0');
+                    var amountFormated = string.Concat(str[0], decimals);
                     var Payment = new Payment()
                     {
-                         Amount= 1200,
+                         Amount= Convert.ToInt32(amountFormated),
                           Installments = 1,
                            Provider = "Simulado",
-                            SoftDescriptor = "VendasNow",
+                            SoftDescriptor = _subscription.AppName,
                              Type = "CreditCard",
                               CreditCard= CreditCard
                     };
                     var MerchantOrder = new MerchantOrder()
                     {
-                         MerchantOrderId = "500",
+                         MerchantOrderId = id,
                         Payment = Payment
                     };
                     var stringJson = JsonConvert.SerializeObject(MerchantOrder);
@@ -78,8 +83,16 @@ namespace vendasnowapi.Controllers
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                     var response = await httpClient.SendAsync(request);
                     response.EnsureSuccessStatusCode();
-                    var content = JsonConvert.SerializeObject(await response.Content.ReadAsStringAsync());
-                    return new JsonResult(content);
+
+                    var merchantOrderReturn = JsonConvert.DeserializeObject<MerchantOrder>(await response.Content.ReadAsStringAsync());
+                    if (merchantOrderReturn.Payment.ReturnCode == "4")
+                    {
+                        _subscription.AspNetUsersId = id;
+                        _subscription.PaymentId = merchantOrderReturn.Payment.PaymentId;
+                        _subscription.SubscriptionDate = DateTime.Now;
+                        _subscriptionRepository.Insert(_subscription);
+                    }
+                    return new OkResult();
                 }
 
             }
