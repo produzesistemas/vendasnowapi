@@ -17,6 +17,7 @@ using System.ComponentModel.Design;
 using Microsoft.Extensions.Hosting;
 using static System.Net.Mime.MediaTypeNames;
 using System.IO;
+using Repositorys;
 
 namespace vendasnowapi.Controllers
 {
@@ -30,12 +31,14 @@ namespace vendasnowapi.Controllers
         private IWebHostEnvironment _hostEnvironment;
         private ISubscriptionRepository _subscriptionRepository;
         private IEstablishmentRepository _establishmentRepository;
+        private IAspNetUsersEstablishmentRepository _aspNetUsersEstablishmentRepository;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IWebHostEnvironment environment,
             ISubscriptionRepository subscriptionRepository,
             IEstablishmentRepository establishmentRepository,
+            IAspNetUsersEstablishmentRepository aspNetUsersEstablishmentRepository,
             IConfiguration Configuration)
         {
             this.userManager = userManager;
@@ -44,6 +47,7 @@ namespace vendasnowapi.Controllers
             this.configuration = Configuration;
             this._subscriptionRepository = subscriptionRepository;
             this._establishmentRepository= establishmentRepository;
+            this._aspNetUsersEstablishmentRepository = aspNetUsersEstablishmentRepository;
         }
 
         [HttpPost()]
@@ -296,7 +300,7 @@ namespace vendasnowapi.Controllers
 
                 Expression<Func<Subscription, bool>> ps1, ps2;
                 var pred = PredicateBuilder.New<Subscription>();
-                ps1 = p => p.AspNetUsersId.Equals(user.Id);
+                ps1 = p => p.ApplicationUserId.Equals(user.Id);
                 pred = pred.And(ps1);
                 ps2 = p => p.Active == true;
                 pred = pred.And(ps2);
@@ -309,7 +313,7 @@ namespace vendasnowapi.Controllers
                 var applicationUser = new ApplicationUser();
                 applicationUser.Id = user.Id;
                 var applicationUserDTO = new ApplicationUserDTO();
-                applicationUserDTO.Token = TokenService.GenerateToken(applicationUser, configuration, permission);
+                applicationUserDTO.Token = TokenService.GenerateToken(applicationUser, configuration, permission, 0);
                 applicationUserDTO.Email = user.Email;
                 applicationUserDTO.UserName = user.UserName;
                 applicationUserDTO.Role = permission;
@@ -374,13 +378,20 @@ namespace vendasnowapi.Controllers
                 applicationUser.EmailConfirmed = true;
                 await this.userManager.UpdateAsync(applicationUser);
 
+                var aspNetUsersEstablishment = _aspNetUsersEstablishmentRepository.GetByUser(applicationUser.Id);
+                if (aspNetUsersEstablishment == null)
+                {
+                    return BadRequest("Acesso negado! Usuário sem empresa!");
+                }
+
                 _subscriptionRepository.Insert(new Subscription()
                 {
                     Active = true,
-                    AspNetUsersId = applicationUser.Id,
+                    ApplicationUserId = applicationUser.Id,
                     PlanId = 1,
                     SubscriptionDate = DateTime.Now,
-                    Value = 0
+                    Value = 0,
+                     EstablishmentId = aspNetUsersEstablishment.EstablishmentId
                 });
                 return Ok();
 
@@ -454,26 +465,31 @@ namespace vendasnowapi.Controllers
                     return BadRequest("Acesso negado! Usuário não tem conta no App de Salão de Beleza!");
                 }
 
-                Expression<Func<Subscription, bool>> ps1, ps2;
-                var pred = PredicateBuilder.New<Subscription>();
-                ps1 = p => p.AspNetUsersId.Equals(user.Id);
-                pred = pred.And(ps1);
-                ps2 = p => p.Active == true;
-                pred = pred.And(ps2);
-                var subscription = _subscriptionRepository.GetCurrent(pred);
-                if (subscription == null)
-                {
-                    return BadRequest("Acesso negado! Usuário sem inscrição!");
-                }
+                //Expression<Func<Subscription, bool>> ps1, ps2;
+                //var pred = PredicateBuilder.New<Subscription>();
+                //ps1 = p => p.ApplicationUserId.Equals(user.Id);
+                //pred = pred.And(ps1);
+                //ps2 = p => p.Active == true;
+                //pred = pred.And(ps2);
+                //var subscription = _subscriptionRepository.GetCurrent(pred);
+                //if (subscription == null)
+                //{
+                //    return BadRequest("Acesso negado! Usuário sem inscrição!");
+                //}
 
                 var applicationUser = new ApplicationUser();
                 applicationUser.Id = user.Id;
                 var applicationUserDTO = new ApplicationUserDTO();
-                applicationUserDTO.Token = TokenService.GenerateToken(applicationUser, configuration, permission);
+                var aspNetUsersEstablishment = _aspNetUsersEstablishmentRepository.GetByUser(user.Id);
+                if (aspNetUsersEstablishment == null)
+                {
+                    return BadRequest("Acesso negado! Usuário sem empresa!");
+                }
+                applicationUserDTO.Token = TokenService.GenerateToken(applicationUser, configuration, permission, aspNetUsersEstablishment.EstablishmentId);
                 applicationUserDTO.Email = user.Email;
                 applicationUserDTO.UserName = user.UserName;
                 applicationUserDTO.Role = permission;
-                applicationUserDTO.SubscriptionDate = subscription.SubscriptionDate.AddDays(subscription.Plan.Days).Date;
+                applicationUserDTO.SubscriptionDate = aspNetUsersEstablishment.Establishment.Subscriptions.FirstOrDefault().SubscriptionDate.AddDays(aspNetUsersEstablishment.Establishment.Subscriptions.FirstOrDefault().Plan.Days).Date;
                 return new JsonResult(applicationUserDTO);
             }
             catch (Exception ex)
@@ -524,13 +540,12 @@ namespace vendasnowapi.Controllers
                     {
                         Active = true,
                         Address = registerBeauty.Address,
+                        District = registerBeauty.District,
+                        City= registerBeauty.City,
                         Cnpj = registerBeauty.Cnpj,
                         Description = registerBeauty.Description,
                         Name = registerBeauty.Name,
-                        Responsible = registerBeauty.Responsible,
-                        TypeId = registerBeauty.TypeId,
-                        AspNetUsersId = user.Id,
-                        Scheduling = registerBeauty.Scheduling
+                        TypeId = registerBeauty.TypeId
                     };
 
                     var pathToSave = string.Concat(_hostEnvironment.ContentRootPath, configuration["pathFileEstablishment"]);
@@ -547,6 +562,12 @@ namespace vendasnowapi.Controllers
                         }
                     }
                     _establishmentRepository.Insert(establishment);
+                    var establishmentAspNetUsers = new AspNetUsersEstablishment()
+                    {
+                        EstablishmentId = establishment.Id,
+                        ApplicationUserId = user.Id
+                    };
+                    _aspNetUsersEstablishmentRepository.Insert(establishmentAspNetUsers);
 
                     sendEmailConfirmUser(registerBeauty.Email, code, user.Id, registerBeauty.AppName);
                 }
@@ -581,7 +602,7 @@ namespace vendasnowapi.Controllers
                 {
                     return BadRequest("Identificação do usuário não encontrada.");
                 }
-                return new JsonResult(_establishmentRepository.GetByUser(id));
+                return new JsonResult(_aspNetUsersEstablishmentRepository.GetByUser(id));
             }
             catch (Exception ex)
             {

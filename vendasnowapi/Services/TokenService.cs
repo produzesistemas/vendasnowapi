@@ -12,7 +12,7 @@ namespace Services
 {
     public static class TokenService
     {
-        public static string GenerateToken(IdentityUser user, IConfiguration configuration, string permission)
+        public static string GenerateToken(IdentityUser user, IConfiguration configuration, string permission, int companyId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(configuration["secretJwt"]);
@@ -20,6 +20,7 @@ namespace Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
+                    new Claim(ClaimTypes.Sid, companyId.ToString()),
                     new Claim(ClaimTypes.PrimarySid, user.Id.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddHours(24),

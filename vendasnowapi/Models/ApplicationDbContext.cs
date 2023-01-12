@@ -18,7 +18,7 @@ namespace Models
         {
             modelBuilder.Entity<Plan>().HasKey(c => c.Id);
             modelBuilder.Entity<Subscription>().HasKey(c => c.Id);
-            modelBuilder.Entity<Subscription>().HasOne(c => c.Plan);
+
             modelBuilder.Entity<Client>().HasKey(c => c.Id);
             modelBuilder.Entity<Product>().HasKey(c => c.Id);
             modelBuilder.Entity<PaymentCondition>().HasKey(c => c.Id);
@@ -27,15 +27,23 @@ namespace Models
             modelBuilder.Entity<SaleService>().HasKey(c => c.Id);
             modelBuilder.Entity<Account>().HasKey(c => c.Id);
             modelBuilder.Entity<Establishment>().HasKey(c => c.Id);
+            modelBuilder.Entity<AspNetUsersEstablishment>().HasKey(c => c.Id);
 
+            modelBuilder.Entity<SaleProduct>().HasOne(c => c.Sale);
+            modelBuilder.Entity<SaleService>().HasOne(c => c.Sale);
+            modelBuilder.Entity<AspNetUsersEstablishment>().HasOne(c => c.Establishment);
+            modelBuilder.Entity<AspNetUsersEstablishment>().HasOne(c => c.ApplicationUser);
+
+            modelBuilder.Entity<Subscription>().HasOne(c => c.Plan);
             modelBuilder.Entity<Sale>().HasOne(c => c.PaymentCondition);
             modelBuilder.Entity<Sale>().HasOne(c => c.Client);
+
+            modelBuilder.Entity<Establishment>().HasMany(c => c.Subscriptions).WithOne(b => b.Establishment).HasForeignKey(c => c.EstablishmentId);
+
             modelBuilder.Entity<Sale>().HasMany(c => c.SaleProduct).WithOne(b => b.Sale).HasForeignKey(c => c.SaleId);
             modelBuilder.Entity<Sale>().HasMany(c => c.SaleService).WithOne(b => b.Sale).HasForeignKey(c => c.SaleId); 
             modelBuilder.Entity<Sale>().HasMany(c => c.Account).WithOne(b => b.Sale).HasForeignKey(c => c.SaleId);
             modelBuilder.Entity<Product>().HasMany(c => c.SaleProduct).WithOne(b => b.Product).HasForeignKey(c => c.ProductId);
-            modelBuilder.Entity<SaleProduct>().HasOne(c => c.Sale);
-            modelBuilder.Entity<SaleService>().HasOne(c => c.Sale);
 
             base.OnModelCreating(modelBuilder);
         }
@@ -51,6 +59,7 @@ namespace Models
         public DbSet<Plan> Plan { get; set; }
         public DbSet<Subscription> Subscription { get; set; }
         public DbSet<Establishment> Establishment { get; set; }
+        public DbSet<AspNetUsersEstablishment> AspNetUsersEstablishment { get; set; }
 
     }
 }

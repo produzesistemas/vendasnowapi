@@ -51,7 +51,7 @@ namespace vendasnowapi.Controllers
 
                 Expression<Func<Subscription, bool>> ps1, ps2;
                 var pred = PredicateBuilder.New<Subscription>();
-                ps1 = p => p.AspNetUsersId.Equals(id);
+                ps1 = p => p.ApplicationUserId.Equals(id);
                 pred = pred.And(ps1);
                 ps2 = p => p.Active == true;
                 pred = pred.And(ps2);
@@ -119,7 +119,7 @@ namespace vendasnowapi.Controllers
 
                 Expression<Func<Subscription, bool>> ps1, ps2;
                 var pred = PredicateBuilder.New<Subscription>();
-                ps1 = p => p.AspNetUsersId.Equals(id);
+                ps1 = p => p.ApplicationUserId.Equals(id);
                 pred = pred.And(ps1);
                 ps2 = p => p.Active == true;
                 pred = pred.And(ps2);

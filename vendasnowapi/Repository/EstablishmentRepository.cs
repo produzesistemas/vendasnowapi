@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System;
 using LinqKit;
 using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Repositorys
 {
@@ -65,7 +66,12 @@ namespace Repositorys
             var entityBase = _context.Establishment.Single(x => x.Id == entity.Id);
 
             entityBase.Description = entity.Description;
-            entityBase.Scheduling = entity.Scheduling;
+            entityBase.District = entity.District;
+            entityBase.City = entity.City;
+            entityBase.Address = entity.Address;
+            entityBase.Cnpj = entity.Cnpj;
+            entityBase.Name = entity.Name;
+            entityBase.TypeId = entity.TypeId;
 
             if (entity.ImageName != null) { entityBase.ImageName = entity.ImageName; }
 
@@ -97,31 +103,6 @@ namespace Repositorys
             GC.SuppressFinalize(this);
         }
 
-        public Establishment GetByUser(string id)
-        {
-            Expression<Func<Establishment, bool>> pred1;
-            var pred = PredicateBuilder.New<Establishment>();
-            pred1 = p => p.AspNetUsersId.Equals(id);
-            pred = pred.And(pred1);
 
-            var establishment = _context.Establishment.FirstOrDefault(pred);
-
-            if (establishment != null)
-            {
-                Expression<Func<Subscription, bool>> ps1, ps2;
-                var predicate = PredicateBuilder.New<Subscription>();
-                ps1 = p => p.AspNetUsersId.Equals(id);
-                predicate = predicate.And(ps1);
-                ps2 = p => p.Active == true;
-                predicate = predicate.And(ps2);
-                establishment.Subscription = _context.Subscription
-                    .Include(x => x.Plan)
-                    .Where(predicate)
-                    .OrderByDescending(x => x.SubscriptionDate)
-                    .FirstOrDefault();
-            }
-
-            return establishment;
-        }
     }
 }
