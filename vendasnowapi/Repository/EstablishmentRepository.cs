@@ -4,9 +4,6 @@ using UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System;
-using LinqKit;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Repositorys
 {

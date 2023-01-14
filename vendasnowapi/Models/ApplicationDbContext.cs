@@ -18,6 +18,7 @@ namespace Models
         {
             modelBuilder.Entity<Plan>().HasKey(c => c.Id);
             modelBuilder.Entity<Subscription>().HasKey(c => c.Id);
+            modelBuilder.Entity<Service>().HasKey(c => c.Id);
 
             modelBuilder.Entity<Client>().HasKey(c => c.Id);
             modelBuilder.Entity<Product>().HasKey(c => c.Id);
@@ -60,6 +61,7 @@ namespace Models
         public DbSet<Subscription> Subscription { get; set; }
         public DbSet<Establishment> Establishment { get; set; }
         public DbSet<AspNetUsersEstablishment> AspNetUsersEstablishment { get; set; }
+        public DbSet<Service> Service { get; set; }
 
     }
 }
