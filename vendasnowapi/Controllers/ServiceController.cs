@@ -89,7 +89,7 @@ namespace vendasnowapi.Controllers
                 var fileDelete = pathToSave;
                 if (service.Id > decimal.Zero)
                 {
-                    if (service.Base64 != null)
+                    if (service.Base64 != "")
                     {
                         byte[] imageBytes = Convert.FromBase64String(service.Base64);
                         var fileName = string.Concat(Guid.NewGuid().ToString(), ".jpg");
@@ -111,7 +111,7 @@ namespace vendasnowapi.Controllers
 
                 } else
                 {
-                    if (service.Base64 != null)
+                    if (service.Base64 != "")
                     {
                         byte[] imageBytes = Convert.FromBase64String(service.Base64);
                         var fileName = string.Concat(Guid.NewGuid().ToString(), ".jpg");
@@ -139,7 +139,11 @@ namespace vendasnowapi.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(string.Concat("Falha no cadastro do produto: ", ex.Message));
+                if (ex.InnerException.Message.Contains("Violation of UNIQUE KEY constraint"))
+                {
+                    return BadRequest("Já existe um serviço com essa descrição!");
+                }
+                return BadRequest(string.Concat("Falha no cadastro do serviço: ", ex.InnerException.Message));
             }
         }
     }
