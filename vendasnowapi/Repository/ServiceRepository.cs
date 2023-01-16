@@ -59,6 +59,21 @@ namespace Repositorys
             return _context.Service.Where(expression).AsQueryable();
         }
 
+        public void Active(int id)
+        {
+            var entity = _context.Service.Single(x => x.Id == id);
+            if (entity.Active)
+            {
+                entity.Active = false;
+            }
+            else
+            {
+                entity.Active = true;
+            }
+            _context.Entry(entity).State = EntityState.Modified;
+            _context.SaveChanges();
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!this.disposed)

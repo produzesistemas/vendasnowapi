@@ -11,5 +11,6 @@ namespace UnitOfWork
         void Delete(int id);
         void Update(Service entity, string fileDelete);
         void Insert(Service entity);
+        void Active(int id);
     }
 }

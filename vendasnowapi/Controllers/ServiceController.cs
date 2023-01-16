@@ -146,5 +146,42 @@ namespace vendasnowapi.Controllers
                 return BadRequest(string.Concat("Falha no cadastro do serviço: ", ex.InnerException.Message));
             }
         }
+
+        [HttpPost()]
+        [Route("delete")]
+        [Authorize()]
+        public IActionResult Delete([FromBody] Service service)
+        {
+            try
+            {
+                _serviceRepository.Delete(service.Id);
+                return new OkResult();
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException.Message.Contains("The DELETE statement conflicted with the REFERENCE constraint"))
+                {
+                    return BadRequest("O Serviço não pode ser excluído. Está relacionado com um profissional. Considere desativar!");
+                }
+                return BadRequest(string.Concat("Falha na exclusão do serviço: ", ex.Message));
+
+            }
+        }
+
+        [HttpPost()]
+        [Route("active")]
+        [Authorize()]
+        public IActionResult Active(Service service)
+        {
+            try
+            {
+                _serviceRepository.Active(service.Id);
+                return new OkResult();
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(ex);
+            }
+        }
     }
 }
