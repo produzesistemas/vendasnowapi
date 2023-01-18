@@ -460,9 +460,9 @@ namespace vendasnowapi.Controllers
                 var claimsPrincipal = await signInManager.CreateUserPrincipalAsync(user);
                 var claims = claimsPrincipal.Claims.ToList();
                 var permission = claims.Where(c => c.Type.Contains("role")).Select(c => c.Value).FirstOrDefault();
-                if (!permission.Equals("AppBeauty"))
+                if (!permission.Equals("Partner"))
                 {
-                    return BadRequest("Acesso negado! Usuário não tem conta no App de Salão de Beleza!");
+                    return BadRequest("Acesso negado! Usuário não é dono de estabelecimento no App!");
                 }
 
                 //Expression<Func<Subscription, bool>> ps1, ps2;
@@ -532,7 +532,7 @@ namespace vendasnowapi.Controllers
 
                 if (addUserResult.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user, registerBeauty.AppName);
+                    await userManager.AddToRoleAsync(user, "Partner");
                     var code = Guid.NewGuid().ToString();
                     await userManager.AddClaimAsync(user, new Claim("CodeConfirmation", code));
 
