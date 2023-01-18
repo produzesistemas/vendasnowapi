@@ -20,5 +20,7 @@ namespace Models
 
         [NotMapped]
         public string Base64 { get; set; }
+        [NotMapped]
+        public virtual List<ProfessionalService> ProfessionalService { get; set; }
     }
 }

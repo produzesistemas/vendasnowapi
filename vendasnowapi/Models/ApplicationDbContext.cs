@@ -19,6 +19,11 @@ namespace Models
             modelBuilder.Entity<Plan>().HasKey(c => c.Id);
             modelBuilder.Entity<Subscription>().HasKey(c => c.Id);
             modelBuilder.Entity<Service>().HasKey(c => c.Id);
+            modelBuilder.Entity<Professional>().HasKey(c => c.Id);
+            modelBuilder.Entity<ProfessionalService>().HasKey(c => c.Id);
+            modelBuilder.Entity<ProfessionalService>().HasOne(c => c.Professional);
+            modelBuilder.Entity<Professional>().HasMany(c => c.ProfessionalService).WithOne(b => b.Professional).HasForeignKey(c => c.ProfessionalId);
+            modelBuilder.Entity<Service>().HasMany(c => c.ProfessionalService).WithOne(b => b.Service).HasForeignKey(c => c.ServiceId);
 
             modelBuilder.Entity<Client>().HasKey(c => c.Id);
             modelBuilder.Entity<Product>().HasKey(c => c.Id);
@@ -30,10 +35,11 @@ namespace Models
             modelBuilder.Entity<Establishment>().HasKey(c => c.Id);
             modelBuilder.Entity<AspNetUsersEstablishment>().HasKey(c => c.Id);
 
+
             modelBuilder.Entity<SaleProduct>().HasOne(c => c.Sale);
             modelBuilder.Entity<SaleService>().HasOne(c => c.Sale);
             modelBuilder.Entity<AspNetUsersEstablishment>().HasOne(c => c.Establishment);
-            modelBuilder.Entity<AspNetUsersEstablishment>().HasOne(c => c.ApplicationUser);
+
 
             modelBuilder.Entity<Subscription>().HasOne(c => c.Plan);
             modelBuilder.Entity<Sale>().HasOne(c => c.PaymentCondition);
@@ -62,6 +68,7 @@ namespace Models
         public DbSet<Establishment> Establishment { get; set; }
         public DbSet<AspNetUsersEstablishment> AspNetUsersEstablishment { get; set; }
         public DbSet<Service> Service { get; set; }
-
+        public DbSet<Professional> Professional { get; set; }
+        public DbSet<ProfessionalService> ProfessionalService { get; set; }
     }
 }
