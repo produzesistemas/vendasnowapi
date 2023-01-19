@@ -55,8 +55,6 @@ namespace vendasnowapi.Controllers
 
                 Expression<Func<Service, bool>> ps1, ps2;
                 var pred = PredicateBuilder.New<Service>();
-                ps1 = p => p.ApplicationUserId.Equals(id);
-                pred = pred.And(ps1);
                 ps2 = p => p.EstablishmentId == establishmentId;
                 pred = pred.And(ps2);
                 return new JsonResult(_serviceRepository.Where(pred).ToList());
@@ -181,6 +179,39 @@ namespace vendasnowapi.Controllers
             catch (Exception ex)
             {
                 return new JsonResult(ex);
+            }
+        }
+
+        [HttpGet()]
+        [Route("getAllActive")]
+        [Authorize()]
+        public IActionResult GetAllActive()
+        {
+            try
+            {
+                ClaimsPrincipal currentUser = this.User;
+                var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
+                var establishmentId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(z => z.Type.Contains("sid")).Value);
+                if (id == null)
+                {
+                    return BadRequest("Identificação do usuário não encontrada.");
+                }
+                if (establishmentId == decimal.Zero)
+                {
+                    return BadRequest("Usuário sem Estabelecimento cadastrado.");
+                }
+
+                Expression<Func<Service, bool>> ps1, ps2;
+                var pred = PredicateBuilder.New<Service>();
+                ps1 = p => p.Active == true;
+                pred = pred.And(ps1);
+                ps2 = p => p.EstablishmentId == establishmentId;
+                pred = pred.And(ps2);
+                return new JsonResult(_serviceRepository.Where(pred).ToList());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(string.Concat("Falha no carregamento dos Serviços: ", ex.Message));
             }
         }
     }
