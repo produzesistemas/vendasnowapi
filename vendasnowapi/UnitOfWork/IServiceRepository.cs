@@ -8,7 +8,7 @@ namespace UnitOfWork
     {
         Service Get(int id);
         IQueryable<Service> Where(Expression<Func<Service, bool>> expression);
-        void Delete(int id);
+        void Delete(int id, string fileDelete);
         void Update(Service entity, string fileDelete);
         void Insert(Service entity);
         void Active(int id);

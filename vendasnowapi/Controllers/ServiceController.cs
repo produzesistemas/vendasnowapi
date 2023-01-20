@@ -152,7 +152,9 @@ namespace vendasnowapi.Controllers
         {
             try
             {
-                _serviceRepository.Delete(service.Id);
+                var pathToSave = string.Concat(_hostEnvironment.ContentRootPath, configuration["pathFileService"]);
+                var fileDelete = pathToSave;
+                _serviceRepository.Delete(service.Id, fileDelete);
                 return new OkResult();
             }
             catch (Exception ex)

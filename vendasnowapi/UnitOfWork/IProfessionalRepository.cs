@@ -8,7 +8,7 @@ namespace UnitOfWork
     {
         Professional Get(int id);
         IQueryable<Professional> Where(Expression<Func<Professional, bool>> expression);
-        void Delete(int id);
+        void Delete(int id, string fileDelete);
         void Update(Professional entity, string fileDelete);
         void Insert(Professional entity);
         void Active(int id);

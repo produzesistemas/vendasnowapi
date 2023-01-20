@@ -18,6 +18,7 @@ using Microsoft.Extensions.Hosting;
 using static System.Net.Mime.MediaTypeNames;
 using System.IO;
 using Repositorys;
+using System.Text.RegularExpressions;
 
 namespace vendasnowapi.Controllers
 {
@@ -510,6 +511,7 @@ namespace vendasnowapi.Controllers
         {
             try
             {
+
                 var applicationUser = this.userManager.FindByEmailAsync(registerBeauty.Email);
                 if (applicationUser.Result != null)
                 {
@@ -541,7 +543,7 @@ namespace vendasnowapi.Controllers
                         Active = true,
                         Address = registerBeauty.Address,
                         District = registerBeauty.District,
-                        City= registerBeauty.City,
+                        City = registerBeauty.City,
                         Cnpj = registerBeauty.Cnpj,
                         Description = registerBeauty.Description,
                         Name = registerBeauty.Name,

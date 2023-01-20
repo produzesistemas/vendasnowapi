@@ -16,11 +16,17 @@ namespace Repositorys
             _context = context;
         }
 
-        public void Delete(int id)
+        public void Delete(int id, string fileDelete)
         {
             var entity = _context.Service.Single(x => x.Id == id);
+            fileDelete = string.Concat(fileDelete, entity.ImageName);
+            if (System.IO.File.Exists(fileDelete))
+            {
+                System.IO.File.Delete(fileDelete);
+            }
             _context.Remove(entity);
             _context.SaveChanges();
+
         }
 
         public Service Get(int id)
