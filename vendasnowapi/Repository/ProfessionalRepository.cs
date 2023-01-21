@@ -24,6 +24,8 @@ namespace Repositorys
             {
                 System.IO.File.Delete(fileDelete);
             }
+            var services = _context.ProfessionalService.Where(c => c.ProfessionalId == id);
+            _context.RemoveRange(services);
             _context.Remove(entity);
             _context.SaveChanges();
         }
@@ -59,7 +61,7 @@ namespace Repositorys
 
         public IQueryable<Professional> Where(Expression<Func<Professional, bool>> expression)
         {
-            return _context.Professional.Where(expression).AsQueryable();
+            return _context.Professional.Where(expression).Include(x => x.ProfessionalService).AsQueryable();
         }
 
         public void Active(int id)

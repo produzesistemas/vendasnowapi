@@ -7,7 +7,6 @@ namespace Models
     {
         public int ServiceId { get; set; }
         public int ProfessionalId { get; set; }
-        public decimal? Value { get; set; }
 
         [NotMapped]
         public Service Service { get; set; }
