@@ -4,6 +4,8 @@ using UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System;
+using System.Collections.Generic;
+
 namespace Repositorys
 {
     public class ProfessionalRepository : IProfessionalRepository, IDisposable
@@ -43,20 +45,51 @@ namespace Repositorys
 
         public void Update(Professional entity, string fileDelete)
         {
-            var entityBase = _context.Professional.Single(x => x.Id == entity.Id);
+            var entityBase = _context.Professional.Include(x => x.ProfessionalService).Single(x => x.Id == entity.Id);
             entityBase.Name = entity.Name;
             entityBase.UpdateAspNetUsersId= entity.UpdateAspNetUsersId;
             entityBase.UpdateDate= DateTime.Now;
 
-                fileDelete = string.Concat(fileDelete, entityBase.ImageName);
-                entityBase.ImageName = entity.ImageName;
-                if (System.IO.File.Exists(fileDelete))
-                {
-                    System.IO.File.Delete(fileDelete);
-                }
+            fileDelete = string.Concat(fileDelete, entityBase.ImageName);
+            entityBase.ImageName = entity.ImageName;
+            if (System.IO.File.Exists(fileDelete))
+            {
+                System.IO.File.Delete(fileDelete);
+            }
+
+            var toDelete = entityBase.ProfessionalService.Except(entity.ProfessionalService, new EqualityComparer()).ToList();
+            var toInsert = entity.ProfessionalService.Except(entityBase.ProfessionalService, new EqualityComparer()).ToList();
+            toDelete.ForEach(x =>
+            {
+                x.Professional = null;
+                _context.Remove(x);
+            });
+            toInsert.ForEach(x =>
+            {
+                x.ProfessionalId = entityBase.Id;
+                x.Id = 0;
+                _context.ProfessionalService.Add(x);
+            });
 
             _context.Entry(entityBase).State = EntityState.Modified;
             _context.SaveChanges();
+        }
+
+        class EqualityComparer : IEqualityComparer<ProfessionalService>
+        {
+            public bool Equals(ProfessionalService x, ProfessionalService y)
+            {
+                if (object.ReferenceEquals(x, y))
+                    return true;
+                if (x == null || y == null)
+                    return false;
+                return x.ProfessionalId == y.ProfessionalId && x.ServiceId == y.ServiceId;
+            }
+
+            public int GetHashCode(ProfessionalService obj)
+            {
+                return obj.Id.GetHashCode();
+            }
         }
 
         public IQueryable<Professional> Where(Expression<Func<Professional, bool>> expression)
