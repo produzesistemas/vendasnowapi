@@ -19,11 +19,15 @@ namespace Models
             modelBuilder.Entity<Plan>().HasKey(c => c.Id);
             modelBuilder.Entity<Subscription>().HasKey(c => c.Id);
             modelBuilder.Entity<Service>().HasKey(c => c.Id);
+            modelBuilder.Entity<OpeningHours>().HasKey(c => c.Id);
             modelBuilder.Entity<Professional>().HasKey(c => c.Id);
             modelBuilder.Entity<ProfessionalService>().HasKey(c => c.Id);
             modelBuilder.Entity<ProfessionalService>().HasOne(c => c.Professional);
             modelBuilder.Entity<Professional>().HasMany(c => c.ProfessionalService).WithOne(b => b.Professional).HasForeignKey(c => c.ProfessionalId);
             modelBuilder.Entity<Service>().HasMany(c => c.ProfessionalService).WithOne(b => b.Service).HasForeignKey(c => c.ServiceId);
+            modelBuilder.Entity<Establishment>().HasMany(c => c.Subscriptions).WithOne(b => b.Establishment).HasForeignKey(c => c.EstablishmentId);
+            modelBuilder.Entity<Establishment>().HasMany(c => c.Services).WithOne(b => b.Establishment).HasForeignKey(c => c.EstablishmentId);
+            modelBuilder.Entity<Establishment>().HasMany(c => c.OpeningHours).WithOne(b => b.Establishment).HasForeignKey(c => c.EstablishmentId);
 
             modelBuilder.Entity<Client>().HasKey(c => c.Id);
             modelBuilder.Entity<Product>().HasKey(c => c.Id);
@@ -70,5 +74,6 @@ namespace Models
         public DbSet<Service> Service { get; set; }
         public DbSet<Professional> Professional { get; set; }
         public DbSet<ProfessionalService> ProfessionalService { get; set; }
+        public DbSet<OpeningHours> OpeningHours { get; set; }
     }
 }

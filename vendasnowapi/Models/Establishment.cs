@@ -19,6 +19,11 @@ namespace Models
 
         [NotMapped]
         public virtual List<Subscription> Subscriptions { get; set; }
+        [NotMapped]
+        public virtual List<Service> Services { get; set; }
+
+        [NotMapped]
+        public virtual List<OpeningHours> OpeningHours { get; set; }
 
     }
 }
