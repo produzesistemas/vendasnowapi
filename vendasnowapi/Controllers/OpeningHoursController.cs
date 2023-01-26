@@ -66,25 +66,34 @@ namespace vendasnowapi.Controllers
             {
                 ClaimsPrincipal currentUser = this.User;
                 var id = currentUser.Claims.FirstOrDefault(z => z.Type.Contains("primarysid")).Value;
+                var establishmentId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(z => z.Type.Contains("sid")).Value);
                 if (id == null)
                 {
                     return BadRequest("Identificação do usuário não encontrada.");
                 }
+                if (establishmentId == decimal.Zero)
+                {
+                    return BadRequest("Usuário sem Estabelecimento cadastrado.");
+                }
 
                 if (openingHours.Id > decimal.Zero)
                 {
+                    openingHours.UpdateAspNetUsersId = id;
                     _OpeningHoursRepository.Update(openingHours);
                 }
                 else
                 {
                     openingHours.ApplicationUserId = id;
+                    openingHours.EstablishmentId = establishmentId;
+                    openingHours.CreateDate = DateTime.Now;
+                    openingHours.Active = true;
                     _OpeningHoursRepository.Insert(openingHours);
                 }
                 return new OkResult();
             }
             catch (Exception ex)
             {
-                return BadRequest(string.Concat("Falha no cadastro do horário: ", ex.Message));
+                return BadRequest(string.Concat("Falha no cadastro do horário: ", ex.InnerException));
             }
         }
 
