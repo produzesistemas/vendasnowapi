@@ -24,6 +24,8 @@ namespace Models
 
         [NotMapped]
         public virtual List<OpeningHours> OpeningHours { get; set; }
+        [NotMapped]
+        public virtual List<Scheduling> Schedulings { get; set; }
 
     }
 }

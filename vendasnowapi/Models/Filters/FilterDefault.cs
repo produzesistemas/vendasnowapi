@@ -12,6 +12,7 @@ namespace Models.Filters
         public int Status { get; set; }
 
         public int SizePage { get; set; }
+        public string ApplicationUserId { get; set; }
 
         public DateTime? DueDate { get; set; }
 
